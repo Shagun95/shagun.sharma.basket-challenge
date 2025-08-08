@@ -2,9 +2,23 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// Util class to manage basic operation of the basket ball
+/// </summary>
 public class BallUtils
 {
+    /// <summary>
+    /// The offset to apply to touch the ring before going to the goal
+    /// </summary>
+    private static float ringOffset = 0.14f;
+    /// <summary>
+    /// The offset to apply for a wrong shot
+    /// </summary>
+    private static float wrongShootOffset = 0.5f;
     
+    /// <summary>
+    /// Used for error handling
+    /// </summary>
     public enum ShootType 
     {
         PERFECT,
@@ -13,7 +27,9 @@ public class BallUtils
         WRONG
     }
 
-    
+    /// <summary>
+    /// Shoot the ball toward the basket, including error handling
+    /// </summary>
     public static Vector3 ShootBall(Vector3 start, Vector3 target, float timeToTarget, ShootType type)
     {
         Vector3 shot = VelocityToTarget(start, target, timeToTarget, type);
@@ -61,12 +77,13 @@ public class BallUtils
                 //no need to intervene
                 break;
             case ShootType.RING:
-                perfectShot.x += Random.value < 0.5f ? 0.14f : -0.14f;
+                perfectShot.x += Random.value < 0.5f ? ringOffset : -ringOffset;
                 break;
             case ShootType.BACK_BOARD:
+                //todo most probably, if player aims for the board, on a wrong shot the ball should hit the board, like in the original game
                 break;
             case ShootType.WRONG:
-                perfectShot.x += Random.value < 0.5f ? 0.5f : -0.5f;
+                perfectShot.x += Random.value < 0.5f ? wrongShootOffset : -wrongShootOffset;
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
