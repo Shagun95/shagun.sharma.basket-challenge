@@ -21,7 +21,6 @@ public class UIFlowManager : MonoBehaviour
     [BoxGroup("Panels")]
     [SerializeField]
     private RectTransform MainMenuPanel, GamePlayPanel, RewardPanel, PlayAgainPanel;
-
     
 
     /// <summary>
