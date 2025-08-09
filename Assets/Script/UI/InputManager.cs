@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
@@ -5,6 +6,13 @@ using UnityEngine;
 /// </summary>
 public class InputManager : MonoBehaviour
 {
+    [SerializeField, Required]
+    private LaunchBarController launchBar;
+
+    [SerializeField]
+    private float maxSwipeDistance = 500f;
+    [SerializeField]
+    private float accumulatedDistance = 0f;
     
     private Vector2 startPos;
     private Vector2 lastPos;
@@ -14,17 +22,12 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetInput();
-    }
-
-    private void GetInput()
-    {
         #if UNITY_EDITOR || UNITY_STANDALONE
-        ManageMouseInput();
-        
+                ManageMouseInput();
+                
         #elif UNITY_ANDROID //no iOS needed for prototype
-        ManageTouchInput();
-        
+                ManageTouchInput();
+                
         #endif
     }
     
@@ -114,7 +117,10 @@ public class InputManager : MonoBehaviour
         //the swipe works as long as it goes up
         if (deltaPos >= 0)
         {
-            //we will manage the feedback here
+            accumulatedDistance += deltaPos;
+            float progress = Mathf.Clamp01(accumulatedDistance / maxSwipeDistance);
+            launchBar.SetFillBar(progress);
+            
             lastPos = currentPos;
         }
         else
@@ -131,7 +137,13 @@ public class InputManager : MonoBehaviour
     {
         Debug.Log("stopped swiping up");
         lastPos = pos;
+        
+        ShootType shootType = launchBar.CheckShoot();
+        //trigger the event the ball has subscribed to
+        EVMLight.Trigger(GameEvent.LAUNCH_BALL, shootType);
+        
         isSwiping = false;
+        accumulatedDistance = 0f;
     }
 
     #endregion

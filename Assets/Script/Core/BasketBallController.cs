@@ -9,13 +9,22 @@ public class BasketBallController : MonoBehaviour
 
     [SerializeField]
     private Transform basketTarget, backBoardTarget;
-    
+
+    private void OnEnable()
+    {
+        EVMLight.Subscribe<ShootType>(GameEvent.LAUNCH_BALL, ShootBall);
+    }
+
+    private void OnDisable()
+    {
+        EVMLight.Unsubscribe<ShootType>(GameEvent.LAUNCH_BALL, ShootBall);
+    }
 
     [Button("test shoot")]
-    public void ShootBall(BallUtils.ShootType type)
+    private void ShootBall(ShootType type)
     {
         Vector3 target = basketTarget.position;
-        if (type == BallUtils.ShootType.BACK_BOARD)
+        if (type == ShootType.BACK_BOARD)
             target = backBoardTarget.position;
         rb.velocity = BallUtils.ShootBall(transform.position, target, 2, type);
     }

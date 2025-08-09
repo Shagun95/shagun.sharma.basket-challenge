@@ -16,16 +16,7 @@ public class BallUtils
     /// </summary>
     private static float wrongShootOffset = 0.5f;
     
-    /// <summary>
-    /// Used for error handling
-    /// </summary>
-    public enum ShootType 
-    {
-        PERFECT,
-        RING,
-        BACK_BOARD,
-        WRONG
-    }
+    
 
     /// <summary>
     /// Shoot the ball toward the basket, including error handling
@@ -91,4 +82,15 @@ public class BallUtils
 
         return perfectShot;
     }
+}
+
+/// <summary>
+/// Used for error handling
+/// </summary>
+public enum ShootType 
+{
+    PERFECT,
+    RING,
+    BACK_BOARD,
+    WRONG
 }
