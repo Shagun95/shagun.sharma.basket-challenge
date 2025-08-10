@@ -10,6 +10,8 @@ public class BasketBallController : MonoBehaviour
     [SerializeField]
     private Transform basketTarget, backBoardTarget;
 
+    public Transform GetOwnTrasnform => GetComponent<Transform>();
+
     /// <summary>
     /// will use to calculate how many points to give
     /// </summary>
@@ -41,6 +43,12 @@ public class BasketBallController : MonoBehaviour
         transform.position = Vector3.zero;
         rb.velocity = Vector3.zero;         
         rb.angularVelocity = Vector3.zero;  
+    }
+
+    public void StopBallSpinning()
+    {
+        rb.velocity = Vector3.zero;         
+        rb.angularVelocity = Vector3.zero; 
     }
 
     private void OnTriggerEnter(Collider other)

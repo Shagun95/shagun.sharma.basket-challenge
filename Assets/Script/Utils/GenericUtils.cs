@@ -20,6 +20,8 @@ public class GenericUtils
         return worldRect1.Overlaps(worldRect2);
     }
     
+    
+    
     private static Rect GetWorldRect(RectTransform rectTransform)
     {
         var localRect = rectTransform.rect;

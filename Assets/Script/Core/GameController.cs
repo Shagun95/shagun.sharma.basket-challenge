@@ -7,6 +7,18 @@ using UnityEngine;
 public class GameController : MonoBehaviour
 {
 
+    [SerializeField] 
+    private List<Transform> postionsFlags;
+
+    [SerializeField, BoxGroup("References")]
+    private Transform playerTrasorm, camera, basketTransform;
+
+    [SerializeField, BoxGroup("References")]
+    private BasketBallController _basketBallController;
+    
+    
+    private int currentPositionIndex;
+
     [ShowInInspector]
     private int playerScore;
     [ShowInInspector]
@@ -34,8 +46,52 @@ public class GameController : MonoBehaviour
     {
         playerScore = 0;
         opponentScore = 0;
+        currentPositionIndex = 0;
     }
     
-    public void AddPlayerScore(int points) => playerScore += points;
+    public void AddPlayerScore(int points)
+    {
+        playerScore += points;
+        GoToNextPostion();
+    }
+
     public void AddOpponentScore(int points) => opponentScore += points;
+
+    [Button]
+    private void GoToNextPostion()
+    {
+        currentPositionIndex++;
+        if (currentPositionIndex > postionsFlags.Count-1)
+            currentPositionIndex = 0;
+        Vector3 currentPosition = postionsFlags[currentPositionIndex].position;
+        _basketBallController.StopBallSpinning();
+        ChangePositionAndRotation(currentPosition, playerTrasorm);
+        ChangePositionAndRotation(currentPosition, _basketBallController.GetOwnTrasnform, null, .14f);
+        ChangePositionAndRotation(currentPosition, camera, 5);
+
+    }
+
+    
+    private void ChangePositionAndRotation(Vector3 pos, Transform target, float? zOffset = null, float? customYPosition = null)
+    {
+        if (customYPosition.HasValue)
+        {
+            pos.y = customYPosition.Value;
+        }
+        else
+        {
+            pos.y = target.position.y;
+        }
+        
+        target.position = pos;
+        
+        //face the basket
+        Vector3 lookPos = basketTransform.position;
+        lookPos.y = target.position.y;
+        target.LookAt(lookPos);
+        
+        if (zOffset.HasValue)
+            target.position -= target.forward * zOffset.Value;
+        
+    }
 }
