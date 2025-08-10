@@ -24,16 +24,7 @@ public class LaunchBarController : MonoBehaviour
     [SerializeField, BoxGroup("Blue zone"), Tooltip("Setup the distance in height from base of the blue area")] 
     private float yDistanceBlueZone1, yDistanceBlueZone2, yDistanceBlueZone3;
 
-    /// <summary>
-    /// Type of postion to setup the player (2 points, 3 points etc) they also have
-    /// different setup of the bar
-    /// </summary>
-    public enum Position
-    {
-        LAUNCH_ONE,
-        LAUNCH_TWO,
-        LAUNCH_THREE
-    }
+    
     
     [Button]
     public void SetFillBar(float fill)

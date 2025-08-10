@@ -84,13 +84,4 @@ public class BallUtils
     }
 }
 
-/// <summary>
-/// Used for error handling
-/// </summary>
-public enum ShootType 
-{
-    PERFECT,
-    RING,
-    BACK_BOARD,
-    WRONG
-}
+
