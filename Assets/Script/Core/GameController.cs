@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -30,16 +28,23 @@ public class GameController : MonoBehaviour
     private void OnEnable()
     {
         EVMLight.Subscribe<int>(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Subscribe<ShootType>(GameEvent.LAUNCH_BALL, ManageTimer);
     }
 
     private void OnDisable()
     {
         EVMLight.Unsubscribe<int>(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Unsubscribe<ShootType>(GameEvent.LAUNCH_BALL, ManageTimer);
     }
 
     void Start()
     {
         ResetScore();
+    }
+
+    private void ManageTimer(ShootType s)
+    {
+        GenericUtils.StartTimer(gameSettings.timeToNextPosition, GoToNextPostion);
     }
 
     private void ResetScore()
@@ -52,7 +57,6 @@ public class GameController : MonoBehaviour
     public void AddPlayerScore(int points)
     {
         playerScore += points;
-        GoToNextPostion();
     }
 
     public void AddOpponentScore(int points) => opponentScore += points;
@@ -94,4 +98,6 @@ public class GameController : MonoBehaviour
             target.position -= target.forward * zOffset.Value;
         
     }
+
+    private GameSettings gameSettings => GameData.Instance.gameSettings;
 }

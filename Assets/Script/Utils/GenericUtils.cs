@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using MEC;
+using System;
 
 public class GenericUtils
 {
@@ -18,6 +18,14 @@ public class GenericUtils
         Rect worldRect2 = GetWorldRect(rect2);
 
         return worldRect1.Overlaps(worldRect2);
+    }
+    
+    /// <summary>
+    /// Starts a timer and perform an action when at zero
+    /// </summary>
+    public static CoroutineHandle StartTimer(float seconds, Action onComplete)
+    {
+        return Timing.CallDelayed(seconds, () => onComplete?.Invoke());
     }
     
     
