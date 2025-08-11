@@ -139,8 +139,9 @@ public class InputManager : MonoBehaviour
         lastPos = pos;
         
         ShootType shootType = launchBar.CheckShoot();
+        SessionData.Instance.currentShootType = shootType;
         //trigger the event the ball has subscribed to
-        EVMLight.Trigger(GameEvent.LAUNCH_BALL, shootType);
+        EVMLight.Trigger(GameEvent.LAUNCH_BALL);
         
         isSwiping = false;
         accumulatedDistance = 0f;

@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// Util class to manage basic operation of the basket ball
 /// </summary>
-public class BallUtils
+public class PhysicsUtils
 {
     /// <summary>
     /// The offset to apply to touch the ring before going to the goal

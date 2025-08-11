@@ -24,8 +24,16 @@ public class LaunchBarController : MonoBehaviour
     [SerializeField, BoxGroup("Blue zone"), Tooltip("Setup the distance in height from base of the blue area")] 
     private float yDistanceBlueZone1, yDistanceBlueZone2, yDistanceBlueZone3;
 
-    
-    
+    private void OnEnable()
+    {
+        EVMLight.Subscribe(GameEvent.POSITION_CHANGED, ResetBar);
+    }
+
+    private void OnDisable()
+    {
+        EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, ResetBar);
+    }
+
     [Button]
     public void SetFillBar(float fill)
     {

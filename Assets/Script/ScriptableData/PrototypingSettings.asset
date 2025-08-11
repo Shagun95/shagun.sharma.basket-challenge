@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: PrototypingSettings
   m_EditorClassIdentifier: 
   timeToNextPosition: 3
+  timeToLaunchBall: 2

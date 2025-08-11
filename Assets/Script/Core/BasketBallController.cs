@@ -19,12 +19,17 @@ public class BasketBallController : MonoBehaviour
 
     private void OnEnable()
     {
-        EVMLight.Subscribe<ShootType>(GameEvent.LAUNCH_BALL, ShootBall);
+        EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ShootBall);
     }
 
     private void OnDisable()
     {
-        EVMLight.Unsubscribe<ShootType>(GameEvent.LAUNCH_BALL, ShootBall);
+        EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ShootBall);
+    }
+
+    private void ShootBall()
+    {
+        ShootBall(SessionData.Instance.currentShootType);
     }
 
     [Button("test shoot")]
@@ -34,7 +39,10 @@ public class BasketBallController : MonoBehaviour
         Vector3 target = basketTarget.position;
         if (type == ShootType.BACK_BOARD)
             target = backBoardTarget.position;
-        rb.velocity = BallUtils.ShootBall(transform.position, target, 2, type);
+
+        //take target time from the scriptable settings
+        float timeToReachTarget = GameData.Instance.gameSettings.timeToLaunchBall;
+        rb.velocity = PhysicsUtils.ShootBall(transform.position, target, timeToReachTarget, type);
     }
 
     [Button]
@@ -57,7 +65,8 @@ public class BasketBallController : MonoBehaviour
         {
             Debug.Log("Point Scored!");
             int points = PointByShoot();
-            EVMLight.Trigger(GameEvent.ADD_SCORE_TO_PLAYER, points);
+            SessionData.Instance.scoreToAdd = points;
+            EVMLight.Trigger(GameEvent.ADD_SCORE_TO_PLAYER);
         }
     }
 

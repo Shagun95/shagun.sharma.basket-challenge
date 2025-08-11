@@ -27,14 +27,14 @@ public class GameController : MonoBehaviour
 
     private void OnEnable()
     {
-        EVMLight.Subscribe<int>(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
-        EVMLight.Subscribe<ShootType>(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Subscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ManageTimer);
     }
 
     private void OnDisable()
     {
-        EVMLight.Unsubscribe<int>(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
-        EVMLight.Unsubscribe<ShootType>(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Unsubscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ManageTimer);
     }
 
     void Start()
@@ -42,7 +42,7 @@ public class GameController : MonoBehaviour
         ResetScore();
     }
 
-    private void ManageTimer(ShootType s)
+    private void ManageTimer()
     {
         GenericUtils.StartTimer(gameSettings.timeToNextPosition, GoToNextPostion);
     }
@@ -54,8 +54,9 @@ public class GameController : MonoBehaviour
         currentPositionIndex = 0;
     }
     
-    public void AddPlayerScore(int points)
+    public void AddPlayerScore()
     {
+        int points = SessionData.Instance.scoreToAdd;
         playerScore += points;
     }
 
@@ -96,6 +97,7 @@ public class GameController : MonoBehaviour
         
         if (zOffset.HasValue)
             target.position -= target.forward * zOffset.Value;
+        EVMLight.Trigger(GameEvent.POSITION_CHANGED);
         
     }
 

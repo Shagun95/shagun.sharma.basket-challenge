@@ -5,7 +5,7 @@ public static class EVMLight
 {
     private static Dictionary<GameEvent, Delegate> eventTable = new ();
 
-    public static void Subscribe<T>(GameEvent eventType, Action<T> listener)
+    public static void Subscribe(GameEvent eventType, Action listener)
     {
         if (eventTable.ContainsKey(eventType))
         {
@@ -17,7 +17,7 @@ public static class EVMLight
         }
     }
 
-    public static void Unsubscribe<T>(GameEvent eventType, Action<T> listener)
+    public static void Unsubscribe(GameEvent eventType, Action listener)
     {
         if (eventTable.ContainsKey(eventType))
         {
@@ -30,11 +30,11 @@ public static class EVMLight
         }
     }
 
-    public static void Trigger<T>(GameEvent eventType, T param)
+    public static void Trigger(GameEvent eventType)
     {
         if (eventTable.ContainsKey(eventType))
         {
-            (eventTable[eventType] as Action<T>)?.Invoke(param);
+            (eventTable[eventType] as Action)?.Invoke();
         }
     }
 }
