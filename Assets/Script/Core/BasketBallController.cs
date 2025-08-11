@@ -78,7 +78,7 @@ public class BasketBallController : MonoBehaviour
     /// <returns></returns>
     private int PointByShoot()
     {
-        if (_currentShootType == ShootType.PERFECT)
+        if (_currentShootType == ShootType.PERFECT || _currentShootType == ShootType.BACK_BOARD)
             return 3;
 
         if (_currentShootType == ShootType.RING)

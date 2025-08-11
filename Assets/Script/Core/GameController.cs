@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using TMPro;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
@@ -8,13 +9,16 @@ public class GameController : MonoBehaviour
     [SerializeField] 
     private List<Transform> postionsFlags;
 
-    [SerializeField, BoxGroup("References")]
+    [SerializeField, BoxGroup(" Transform References")]
     private Transform playerTrasorm, camera, basketTransform;
 
     [SerializeField, BoxGroup("References")]
     private BasketBallController _basketBallController;
-    
-    
+
+    [SerializeField] 
+    private TextMeshPro tmpBonusLabel;
+
+    private RandomBonusSettings bonusSettings;
     private int currentPositionIndex;
 
     [ShowInInspector]
@@ -40,6 +44,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         ResetScore();
+        bonusSettings = GameData.Instance.randomBonusSettings;
     }
 
     private void ManageTimer()
@@ -56,7 +61,11 @@ public class GameController : MonoBehaviour
     
     public void AddPlayerScore()
     {
-        int points = SessionData.Instance.scoreToAdd;
+        int points = sessionData.scoreToAdd;
+        //temporary bonus will be more then 0 only if active, if the player achieved a back board score, we can safely add it
+        if (sessionData.currentShootType == ShootType.BACK_BOARD)
+            points += sessionData.currentTemporaryBonus;
+                
         playerScore += points;
     }
 
@@ -73,7 +82,27 @@ public class GameController : MonoBehaviour
         ChangePositionAndRotation(currentPosition, playerTrasorm);
         ChangePositionAndRotation(currentPosition, _basketBallController.GetOwnTrasnform, null, .14f);
         ChangePositionAndRotation(currentPosition, camera, 5);
+        ManageRandomBonus();
+    }
 
+    /// <summary>
+    /// Check if there is a backboard bonus for this shot
+    /// </summary>
+    private void ManageRandomBonus()
+    {
+        if (bonusSettings.BonusActive())
+        {
+            
+            int tmpBonus = bonusSettings.GetRandomBonus();
+            SessionData.Instance.currentTemporaryBonus = tmpBonus;
+            tmpBonusLabel.gameObject.SetActive(true);
+            tmpBonusLabel.text = $"+{tmpBonus}";
+        }
+        else
+        {
+            tmpBonusLabel.gameObject.SetActive(false);
+            SessionData.Instance.currentTemporaryBonus = 0;
+        }
     }
 
     
@@ -102,4 +131,6 @@ public class GameController : MonoBehaviour
     }
 
     private GameSettings gameSettings => GameData.Instance.gameSettings;
+
+    private SessionData sessionData => SessionData.Instance;
 }

@@ -7,4 +7,7 @@ public class GameData : Singleton<GameData>
 {
     [Required]
     public GameSettings gameSettings;
+
+    [Required]
+    public RandomBonusSettings randomBonusSettings;
 }
