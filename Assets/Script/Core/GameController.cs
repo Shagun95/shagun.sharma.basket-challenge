@@ -16,8 +16,8 @@ public class GameController : MonoBehaviour
     [SerializeField, BoxGroup("GUI Labels")] 
     private TextMeshProUGUI timeLabel, pointLabel;
 
-    [SerializeField, BoxGroup("Other eferences")]
-    private BasketBallController _basketBallController;
+    [SerializeField, BoxGroup("Other References")]
+    private BasketBallController basketBallController;
 
     [SerializeField] 
     private TextMeshPro tmpBonusLabel;
@@ -30,10 +30,12 @@ public class GameController : MonoBehaviour
     [ShowInInspector]
     private int opponentScore;
     
+    private int timeRemaining;
+    
     public int PlayerScore => playerScore;
     public int OpponentScore => opponentScore;
 
-    private int timeRemaining;
+    
 
     private void OnEnable()
     {
@@ -112,10 +114,11 @@ public class GameController : MonoBehaviour
     {
         if (currentPositionIndex > postionsFlags.Count-1)
             currentPositionIndex = 0;
+        SessionData.Instance.currentShootPositionIndex = currentPositionIndex;
         Vector3 currentPosition = postionsFlags[currentPositionIndex].position;
-        _basketBallController.StopBallSpinning();
+        basketBallController.StopBallSpinning();
         ChangePositionAndRotation(currentPosition, playerTrasorm);
-        ChangePositionAndRotation(currentPosition, _basketBallController.GetOwnTrasnform, null, .14f);
+        ChangePositionAndRotation(currentPosition, basketBallController.GetOwnTrasnform, null, .14f);
         ChangePositionAndRotation(currentPosition, camera, 5);
         ManageRandomBonus();
         SessionData.Instance.ballIsLaunching = false;

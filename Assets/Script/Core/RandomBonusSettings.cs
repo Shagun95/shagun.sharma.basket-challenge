@@ -1,42 +1,50 @@
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "RandomBonusSettings", menuName = "Settings/Random Bonus Settings")]
 public class RandomBonusSettings : ScriptableObject
 {
+    [FormerlySerializedAs("randomBonusRate")]
     [BoxGroup("Bonus chance", centerLabel: true)]
     [LabelText("(%)")]
     [Range(0, 100)]
-    public int randomBonusRate;
+    public int RandomBonusRate;
 
    
+    [FormerlySerializedAs("commonBonus")]
     [BoxGroup("Bonus & Chance", centerLabel: true)]
     [HorizontalGroup("Bonus & Chance/Common")]
     [LabelText("Common")]
-    public int commonBonus;
+    public int CommonBonus;
 
+    [FormerlySerializedAs("chanceCommonBonus")]
     [HorizontalGroup("Bonus & Chance/Common"), LabelWidth(30)]
     [LabelText("%")]
     [Range(0, 100)]
-    public int chanceCommonBonus;
+    public int ChanceCommonBonus;
 
+    [FormerlySerializedAs("rareBonus")]
     [HorizontalGroup("Bonus & Chance/Rare")]
     [LabelText("Rare")]
-    public int rareBonus;
+    public int RareBonus;
 
+    [FormerlySerializedAs("chanceRareBonus")]
     [HorizontalGroup("Bonus & Chance/Rare"), LabelWidth(30)]
     [LabelText("%")]
     [Range(0, 100)]
-    public int chanceRareBonus;
+    public int ChanceRareBonus;
 
+    [FormerlySerializedAs("veryRareBonus")]
     [HorizontalGroup("Bonus & Chance/VeryRare")]
     [LabelText("Very Rare")]
-    public int veryRareBonus;
+    public int VeryRareBonus;
 
+    [FormerlySerializedAs("chanceVeryRareBonus")]
     [HorizontalGroup("Bonus & Chance/VeryRare"), LabelWidth(30)]
     [LabelText("%")]
     [Range(0, 100)]
-    public int chanceVeryRareBonus;
+    public int ChanceVeryRareBonus;
 
     /// <summary>
     /// Should the bonus be activated
@@ -44,7 +52,7 @@ public class RandomBonusSettings : ScriptableObject
     /// <returns></returns>
     public bool BonusActive()
     {
-        return Random.Range(0, 100) < randomBonusRate;
+        return Random.Range(0, 100) < RandomBonusRate;
     }
 
     /// <summary>
@@ -55,12 +63,12 @@ public class RandomBonusSettings : ScriptableObject
     {
         int roll = Random.Range(0, 100);
         
-        if (roll < chanceCommonBonus)
-            return commonBonus;
+        if (roll < ChanceCommonBonus)
+            return CommonBonus;
         
-        if (roll < chanceCommonBonus + chanceRareBonus)
-            return rareBonus;
+        if (roll < ChanceCommonBonus + ChanceRareBonus)
+            return RareBonus;
         
-        return veryRareBonus;
+        return VeryRareBonus;
     }
 }

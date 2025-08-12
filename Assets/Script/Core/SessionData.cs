@@ -17,4 +17,8 @@ public class SessionData : Singleton<SessionData>
     public bool ballIsLaunching = false;
 
     public int scoreForThisRound;
+    /// <summary>
+    /// Used to calculate at what setting the launchbar should be (green and blue zones)
+    /// </summary>
+    public int currentShootPositionIndex;
 }

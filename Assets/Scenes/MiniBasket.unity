@@ -489,7 +489,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2354384227844847122, guid: 74d6342a997b14fc6af22dfa5fa8d135, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2354384227844847122, guid: 74d6342a997b14fc6af22dfa5fa8d135, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2469,6 +2469,7 @@ MonoBehaviour:
   gameIsOn: 0
   ballIsLaunching: 0
   scoreForThisRound: 0
+  currentShootPositionIndex: 0
 --- !u!1 &1014944430
 GameObject:
   m_ObjectHideFlags: 0
@@ -2889,6 +2890,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   launchBar: {fileID: 129952478}
   maxSwipeDistance: 500
+  minSwipeDistance: 5
   accumulatedDistance: 0
 --- !u!1001 &1246990925
 PrefabInstance:
@@ -2919,7 +2921,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2354384227844847122, guid: 475aa2f241adf430fbf71939e6eefe4c, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2354384227844847122, guid: 475aa2f241adf430fbf71939e6eefe4c, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3235,7 +3237,7 @@ MonoBehaviour:
   basketTransform: {fileID: 279232149}
   timeLabel: {fileID: 770366423}
   pointLabel: {fileID: 433323293}
-  _basketBallController: {fileID: 1197503385}
+  basketBallController: {fileID: 1197503385}
   tmpBonusLabel: {fileID: 867472672}
 --- !u!1 &1556891326
 GameObject:

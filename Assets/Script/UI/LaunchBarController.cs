@@ -28,6 +28,7 @@ public class LaunchBarController : MonoBehaviour
     {
         EVMLight.Subscribe(GameEvent.POSITION_CHANGED, ResetBar);
         EVMLight.Subscribe(GameEvent.GAME_STARTED, ResetBar);
+        EVMLight.Subscribe(GameEvent.POSITION_CHANGED, SetupBar);
         ResetBar();
     }
 
@@ -35,6 +36,7 @@ public class LaunchBarController : MonoBehaviour
     {
         EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, ResetBar);
         EVMLight.Unsubscribe(GameEvent.GAME_STARTED, ResetBar);
+        EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, SetupBar);
     }
 
     [Button]
@@ -43,10 +45,25 @@ public class LaunchBarController : MonoBehaviour
         ownSlider.value = fill;
     }
 
+    /// <summary>
+    /// Will set the Launching bar with the desired positions for the color flags (green and blue)
+    /// cusomizable in the inspector
+    /// </summary>
     [Button]
-    public void SetupBar(Position position)
+    public void SetupBar()
     {
-        switch (position)
+
+        int index = SessionData.Instance.currentShootPositionIndex;
+        Position pos = Position.LAUNCH_ONE;
+        //would be better to base these settings accordiing to variable or to the length of the 
+        //array containing the flags, will leave it like this for the prototype
+        if (index > 2)
+            pos = Position.LAUNCH_TWO;
+
+        if (index > 4)
+            pos = Position.LAUNCH_THREE;
+        
+        switch (pos)
         {
             case Position.LAUNCH_ONE:
                 SetImagePosition(greenZoneImage, yDistanceGreenZone1);
@@ -61,7 +78,7 @@ public class LaunchBarController : MonoBehaviour
                 SetImagePosition(blueZoneImage, yDistanceBlueZone3);
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(position), position, null);
+                throw new ArgumentOutOfRangeException();
         }
     }
 

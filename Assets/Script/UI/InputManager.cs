@@ -11,7 +11,7 @@ public class InputManager : MonoBehaviour
     private LaunchBarController launchBar;
 
     [SerializeField]
-    private float maxSwipeDistance = 500f;
+    private float maxSwipeDistance;
     
     [SerializeField]
     private float minSwipeDistance;
