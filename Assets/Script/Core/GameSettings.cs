@@ -9,4 +9,7 @@ public class GameSettings : ScriptableObject
 
     [Tooltip("The time it takes to reach the basket since the ball was launched")]
     public float timeToLaunchBall;
+
+    [Tooltip("Game time in seconds")]
+    public int gameTime;
 }

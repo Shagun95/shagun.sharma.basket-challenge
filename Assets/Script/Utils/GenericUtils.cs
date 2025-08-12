@@ -28,7 +28,17 @@ public class GenericUtils
         return Timing.CallDelayed(seconds, () => onComplete?.Invoke());
     }
     
-    
+    /// <summary>
+    /// Returns a formatted time as a string
+    /// </summary>
+    /// <param name="totalSeconds"></param>
+    /// <returns></returns>
+    public static string FormatTime(float totalSeconds)
+    {
+        int minutes = Mathf.FloorToInt(totalSeconds / 60);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60);
+        return $"{minutes:D2}:{seconds:D2}";
+    }
     
     private static Rect GetWorldRect(RectTransform rectTransform)
     {

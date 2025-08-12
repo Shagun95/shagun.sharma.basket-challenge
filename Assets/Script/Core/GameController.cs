@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MEC;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
@@ -12,13 +13,16 @@ public class GameController : MonoBehaviour
     [SerializeField, BoxGroup(" Transform References")]
     private Transform playerTrasorm, camera, basketTransform;
 
-    [SerializeField, BoxGroup("References")]
+    [SerializeField, BoxGroup("GUI Labels")] 
+    private TextMeshProUGUI timeLabel, pointLabel;
+
+    [SerializeField, BoxGroup("Other eferences")]
     private BasketBallController _basketBallController;
 
     [SerializeField] 
     private TextMeshPro tmpBonusLabel;
 
-    private RandomBonusSettings bonusSettings;
+    private RandomBonusSettings bonusSettings => GameData.Instance.randomBonusSettings;
     private int currentPositionIndex;
 
     [ShowInInspector]
@@ -29,22 +33,39 @@ public class GameController : MonoBehaviour
     public int PlayerScore => playerScore;
     public int OpponentScore => opponentScore;
 
+    private int timeRemaining;
+
     private void OnEnable()
     {
         EVMLight.Subscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
         EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Subscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
     private void OnDisable()
     {
         EVMLight.Unsubscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
         EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Unsubscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
-    void Start()
+    private void StartGame()
     {
-        ResetScore();
-        bonusSettings = GameData.Instance.randomBonusSettings;
+        ResetGame();
+        timeRemaining = gameSettings.gameTime;
+        Timing.RunCoroutine(StartGameTimer());
+        SessionData.Instance.gameIsOn = true;
+    }
+
+    private void EndGame()
+    {
+        SessionData.Instance.gameIsOn = false;
+        SessionData.Instance.ballIsLaunching = false;
+        SessionData.Instance.scoreForThisRound = playerScore;
+        currentPositionIndex = 0;
+        SetPostion();
+        EVMLight.Trigger(GameEvent.GAME_FINISHED);
+        
     }
 
     private void ManageTimer()
@@ -52,11 +73,16 @@ public class GameController : MonoBehaviour
         GenericUtils.StartTimer(gameSettings.timeToNextPosition, GoToNextPostion);
     }
 
-    private void ResetScore()
+    /// <summary>
+    /// Reset all values to default
+    /// </summary>
+    private void ResetGame()
     {
         playerScore = 0;
         opponentScore = 0;
         currentPositionIndex = 0;
+        pointLabel.text = $"{playerScore}";
+        SetPostion();
     }
     
     public void AddPlayerScore()
@@ -67,6 +93,7 @@ public class GameController : MonoBehaviour
             points += sessionData.currentTemporaryBonus;
                 
         playerScore += points;
+        pointLabel.text = $"{playerScore}";
     }
 
     public void AddOpponentScore(int points) => opponentScore += points;
@@ -74,7 +101,15 @@ public class GameController : MonoBehaviour
     [Button]
     private void GoToNextPostion()
     {
+        //manage "phantom" change positions when the game is already finished
+        if (!sessionData.gameIsOn)
+            return;
         currentPositionIndex++;
+        SetPostion();
+    }
+
+    private void SetPostion()
+    {
         if (currentPositionIndex > postionsFlags.Count-1)
             currentPositionIndex = 0;
         Vector3 currentPosition = postionsFlags[currentPositionIndex].position;
@@ -83,6 +118,7 @@ public class GameController : MonoBehaviour
         ChangePositionAndRotation(currentPosition, _basketBallController.GetOwnTrasnform, null, .14f);
         ChangePositionAndRotation(currentPosition, camera, 5);
         ManageRandomBonus();
+        SessionData.Instance.ballIsLaunching = false;
     }
 
     /// <summary>
@@ -103,6 +139,24 @@ public class GameController : MonoBehaviour
             tmpBonusLabel.gameObject.SetActive(false);
             SessionData.Instance.currentTemporaryBonus = 0;
         }
+    }
+    
+    /// <summary>
+    /// Since we use a label to update a timer, I decided not to use the
+    /// generic method in the Utils
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator<float> StartGameTimer()
+    {
+        while (timeRemaining > 0)
+        {
+            timeLabel.text = GenericUtils.FormatTime(timeRemaining);
+            yield return Timing.WaitForSeconds(1f);
+            timeRemaining--;
+        }
+
+        timeLabel.text = GenericUtils.FormatTime(0);
+        EndGame();
     }
 
     

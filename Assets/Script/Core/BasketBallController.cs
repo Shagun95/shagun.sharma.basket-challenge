@@ -29,12 +29,15 @@ public class BasketBallController : MonoBehaviour
 
     private void ShootBall()
     {
+        if (!SessionData.Instance.gameIsOn)
+            return;
         ShootBall(SessionData.Instance.currentShootType);
     }
 
     [Button("test shoot")]
     private void ShootBall(ShootType type)
     {
+        SessionData.Instance.ballIsLaunching = true;
         _currentShootType = type;
         Vector3 target = basketTarget.position;
         if (type == ShootType.BACK_BOARD)

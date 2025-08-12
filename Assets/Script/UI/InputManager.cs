@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -11,17 +12,33 @@ public class InputManager : MonoBehaviour
 
     [SerializeField]
     private float maxSwipeDistance = 500f;
+    
+    [SerializeField]
+    private float minSwipeDistance;
+    
     [SerializeField]
     private float accumulatedDistance = 0f;
     
     private Vector2 startPos;
     private Vector2 lastPos;
     private bool isSwiping = false;
-    
-    
+
+    private void OnEnable()
+    {
+        EVMLight.Subscribe(GameEvent.GAME_FINISHED, ResetValues);
+    }
+
+    private void OnDisable()
+    {
+        EVMLight.Unsubscribe(GameEvent.GAME_FINISHED, ResetValues);
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if (!SessionData.Instance.gameIsOn || SessionData.Instance.ballIsLaunching)
+            return;
+        
         #if UNITY_EDITOR || UNITY_STANDALONE
                 ManageMouseInput();
                 
@@ -135,7 +152,14 @@ public class InputManager : MonoBehaviour
     /// <param name="pos"></param>
     private void EndSwipe(Vector2 pos)
     {
-        Debug.Log("stopped swiping up");
+        
+        if (accumulatedDistance < minSwipeDistance)
+        {
+            isSwiping = false;
+            accumulatedDistance = 0f;
+            launchBar.SetFillBar(0f);
+            return;
+        }
         lastPos = pos;
         
         ShootType shootType = launchBar.CheckShoot();
@@ -147,6 +171,12 @@ public class InputManager : MonoBehaviour
         accumulatedDistance = 0f;
     }
 
+    private void ResetValues()
+    {
+        isSwiping = false;
+        accumulatedDistance = 0f;
+    }
+    
     #endregion
     
     

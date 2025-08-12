@@ -27,11 +27,14 @@ public class LaunchBarController : MonoBehaviour
     private void OnEnable()
     {
         EVMLight.Subscribe(GameEvent.POSITION_CHANGED, ResetBar);
+        EVMLight.Subscribe(GameEvent.GAME_STARTED, ResetBar);
+        ResetBar();
     }
 
     private void OnDisable()
     {
         EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, ResetBar);
+        EVMLight.Unsubscribe(GameEvent.GAME_STARTED, ResetBar);
     }
 
     [Button]
@@ -89,8 +92,11 @@ public class LaunchBarController : MonoBehaviour
         image.anchoredPosition = pos;
     }
 
-    public void ResetBar() => ownSlider.value = 0f;
-    
+    private void ResetBar()
+    { 
+        ownSlider.value = 0f;
+    }
+
 }
 
 

@@ -11,5 +11,13 @@ public enum GameEvent
     /// <summary>
     /// Player moved to new position
     /// </summary>
-    POSITION_CHANGED
+    POSITION_CHANGED,
+    /// <summary>
+    /// Game has started
+    /// </summary>
+    GAME_STARTED,
+    /// <summary>
+    /// Game is finished
+    /// </summary>
+    GAME_FINISHED
 }
