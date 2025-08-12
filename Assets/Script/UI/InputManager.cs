@@ -10,18 +10,18 @@ public class InputManager : MonoBehaviour
     [SerializeField, Required]
     private LaunchBarController launchBar;
 
-    [SerializeField]
+    [SerializeField, BoxGroup("Input Settings")]
     private float maxSwipeDistance;
     
-    [SerializeField]
+    [SerializeField, BoxGroup("Input Settings")]
     private float minSwipeDistance;
     
-    [SerializeField]
     private float accumulatedDistance = 0f;
     
-    private Vector2 startPos;
     private Vector2 lastPos;
     private bool isSwiping = false;
+
+    private Vector2 currentPosition;
 
     private void OnEnable()
     {
@@ -57,6 +57,7 @@ public class InputManager : MonoBehaviour
         /// </summary>
         private void ManageMouseInput()
         {
+            currentPosition = Input.mousePosition;
             if (!isSwiping && Input.GetMouseButtonDown(0))
             {
                 StartSwipe(Input.mousePosition);
@@ -69,7 +70,7 @@ public class InputManager : MonoBehaviour
 
             if (isSwiping && Input.GetMouseButtonUp(0))
             {
-                EndSwipe(Input.mousePosition);
+                EndSwipe();
             }
 
         }
@@ -87,6 +88,8 @@ public class InputManager : MonoBehaviour
             {
                 Touch t = Input.GetTouch(0);
 
+                currentPosition = t.position;
+
                 if (!isSwiping &&  t.phase == TouchPhase.Began)
                 {
                     StartSwipe(t.position);
@@ -99,7 +102,7 @@ public class InputManager : MonoBehaviour
 
                 if (isSwiping && t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
                 {
-                    EndSwipe(t.position);
+                    EndSwipe();
                 }
             }
         }
@@ -119,8 +122,8 @@ public class InputManager : MonoBehaviour
     {
         Debug.Log("Start swiping up");
         isSwiping = true;
-        startPos = pos;
         lastPos = pos;
+        GenericUtils.StartTimer(GameData.Instance.gameSettings.BarTimer, EndSwipe);
     }
 
     /// <summary>
@@ -142,17 +145,21 @@ public class InputManager : MonoBehaviour
         }
         else
         {
-            EndSwipe(currentPos);
+            EndSwipe();
         }
     }
 
     /// <summary>
     /// The swipe either ended or went down
     /// </summary>
-    /// <param name="pos"></param>
-    private void EndSwipe(Vector2 pos)
+    private void EndSwipe()
     {
+        //the endswipe might be called with the timer even if the ball is launching, we'll prevent that
+        if (SessionData.Instance.ballIsLaunching)
+            return;
         
+        Vector2 pos = currentPosition;
+        //check if the swipe was too short (probably just a touch on the screen)
         if (accumulatedDistance < minSwipeDistance)
         {
             isSwiping = false;

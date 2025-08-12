@@ -37,7 +37,7 @@ public class CameraFollowController : MonoBehaviour
     private void StartTimerFollow()
     {
         follow = true;
-        float timerTime = GameData.Instance.gameSettings.timeToLaunchBall;
+        float timerTime = GameData.Instance.gameSettings.TimeToLaunchBall;
         GenericUtils.StartTimer(timerTime, () => follow = false);
     }
 

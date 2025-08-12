@@ -54,7 +54,7 @@ public class GameController : MonoBehaviour
     private void StartGame()
     {
         ResetGame();
-        timeRemaining = gameSettings.gameTime;
+        timeRemaining = gameSettings.GameTime;
         Timing.RunCoroutine(StartGameTimer());
         SessionData.Instance.gameIsOn = true;
     }
@@ -72,7 +72,7 @@ public class GameController : MonoBehaviour
 
     private void ManageTimer()
     {
-        GenericUtils.StartTimer(gameSettings.timeToNextPosition, GoToNextPostion);
+        GenericUtils.StartTimer(gameSettings.TimeToNextPosition, GoToNextPostion);
     }
 
     /// <summary>

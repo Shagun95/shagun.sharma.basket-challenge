@@ -44,7 +44,7 @@ public class BasketBallController : MonoBehaviour
             target = backBoardTarget.position;
 
         //take target time from the scriptable settings
-        float timeToReachTarget = GameData.Instance.gameSettings.timeToLaunchBall;
+        float timeToReachTarget = GameData.Instance.gameSettings.TimeToLaunchBall;
         rb.velocity = PhysicsUtils.ShootBall(transform.position, target, timeToReachTarget, type);
     }
 

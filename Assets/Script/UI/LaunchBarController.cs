@@ -27,16 +27,14 @@ public class LaunchBarController : MonoBehaviour
     private void OnEnable()
     {
         EVMLight.Subscribe(GameEvent.POSITION_CHANGED, ResetBar);
-        EVMLight.Subscribe(GameEvent.GAME_STARTED, ResetBar);
-        EVMLight.Subscribe(GameEvent.POSITION_CHANGED, SetupBar);
+        EVMLight.Subscribe(GameEvent.POSITION_CHANGED, SetupBarZones);
         ResetBar();
     }
 
     private void OnDisable()
     {
         EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, ResetBar);
-        EVMLight.Unsubscribe(GameEvent.GAME_STARTED, ResetBar);
-        EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, SetupBar);
+        EVMLight.Unsubscribe(GameEvent.POSITION_CHANGED, SetupBarZones);
     }
 
     [Button]
@@ -49,8 +47,7 @@ public class LaunchBarController : MonoBehaviour
     /// Will set the Launching bar with the desired positions for the color flags (green and blue)
     /// cusomizable in the inspector
     /// </summary>
-    [Button]
-    public void SetupBar()
+    public void SetupBarZones()
     {
 
         int index = SessionData.Instance.currentShootPositionIndex;
