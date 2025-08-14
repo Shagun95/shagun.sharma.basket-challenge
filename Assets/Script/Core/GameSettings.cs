@@ -20,4 +20,10 @@ public class GameSettings : ScriptableObject
     [Tooltip("The tolerance in which the bar will give an imperfect shot")]
     public float ImperfectShotTolerance;
 
+    [BoxGroup("BarSensitivity")]
+    public float BarSensitivityAndroid;
+
+    [BoxGroup("BarSensitivity")]
+    public float BarSensitivityDesktop;
+
 }

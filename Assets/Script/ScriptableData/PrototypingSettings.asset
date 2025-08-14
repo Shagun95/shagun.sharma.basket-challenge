@@ -17,3 +17,5 @@ MonoBehaviour:
   GameTime: 120
   BarTimer: 1
   ImperfectShotTolerance: 0.2
+  BarSensitivityAndroid: 0.7
+  BarSensitivityDesktop: 1

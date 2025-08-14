@@ -136,7 +136,7 @@ public class InputManager : MonoBehaviour
         //the swipe works as long as it goes up
         if (deltaPos >= 0)
         {
-            accumulatedDistance += deltaPos;
+            accumulatedDistance += deltaPos * GetBarSensitivity();
             float progress = Mathf.Clamp01(accumulatedDistance / maxSwipeDistance);
             launchBar.SetFillBar(progress);
             
@@ -181,6 +181,17 @@ public class InputManager : MonoBehaviour
     {
         isSwiping = false;
         accumulatedDistance = 0f;
+    }
+
+    private float GetBarSensitivity()
+    {
+        #if UNITY_EDITOR || UNITY_STANDALONE
+                return GameData.Instance.gameSettings.BarSensitivityDesktop;
+        #elif UNITY_ANDROID
+            return GameData.Instance.gameSettings.BarSensitivityAndroid;
+        #else
+            return 1f;
+        #endif
     }
     
     #endregion
