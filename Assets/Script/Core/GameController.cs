@@ -92,7 +92,7 @@ public class GameController : MonoBehaviour
         int points = sessionData.scoreToAdd;
         //temporary bonus will be more then 0 only if active, if the player achieved a back board score, we can safely add it
         if (sessionData.currentShootType == ShootType.BACK_BOARD)
-            points += sessionData.currentTemporaryBonus;
+            points = sessionData.currentTemporaryBonus;
                 
         playerScore += points;
         pointLabel.text = $"{playerScore}";
