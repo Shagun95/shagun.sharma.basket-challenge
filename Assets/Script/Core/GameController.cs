@@ -39,14 +39,14 @@ public class GameController : MonoBehaviour
 
     private void OnEnable()
     {
-        EVMLight.Subscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Subscribe(GameEvent.PLAYER_SCORED, AddPlayerScore);
         EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ManageTimer);
         EVMLight.Subscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
     private void OnDisable()
     {
-        EVMLight.Unsubscribe(GameEvent.ADD_SCORE_TO_PLAYER, AddPlayerScore);
+        EVMLight.Unsubscribe(GameEvent.PLAYER_SCORED, AddPlayerScore);
         EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ManageTimer);
         EVMLight.Unsubscribe(GameEvent.GAME_STARTED, StartGame);
     }

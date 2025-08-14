@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a253d16822c924d5985926d81a87a62d, type: 3}
   m_Name: PrototypingSettings
   m_EditorClassIdentifier: 
-  timeToNextPosition: 3
-  timeToLaunchBall: 2
-  gameTime: 60
+  TimeToNextPosition: 3
+  TimeToLaunchBall: 2
+  GameTime: 999
+  BarTimer: 1
+  ImperfectShotTolerance: 0.2

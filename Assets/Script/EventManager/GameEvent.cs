@@ -7,7 +7,7 @@ public enum GameEvent
     /// <summary>
     /// Used to add a score to the player
     /// </summary>
-    ADD_SCORE_TO_PLAYER,
+    PLAYER_SCORED,
     /// <summary>
     /// Player moved to new position
     /// </summary>

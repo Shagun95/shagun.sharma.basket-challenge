@@ -86,15 +86,30 @@ public class LaunchBarController : MonoBehaviour
     /// <returns></returns>
     public ShootType CheckShoot()
     {
+        SessionData.Instance.verticalDistance = 0;
         bool greenArea = GenericUtils.RectOverlaps(greenZoneImage, checkPointer);
         bool blueArea = GenericUtils.RectOverlaps(blueZoneImage, checkPointer);
 
-        //in this point, we will check if there's a small distance between the pointer and
-        //the area, and will trigger an imperfet shoot if that is the case
-        if (!greenArea && !blueArea)
-            return ShootType.WRONG;
+        if (blueArea)
+            return ShootType.BACK_BOARD;
+        
+        if (greenArea)
+            return ShootType.NET;
+        
+        
+        //if its not a perfect shot, let's calculate what offset is in the bar, and to which type to applu
+        var distanceToGreen = GenericUtils.VerticalDistanceToRect(greenZoneImage, checkPointer);
+        var distanceToBlue = GenericUtils.VerticalDistanceToRect(blueZoneImage, checkPointer);
 
-        return greenArea ? ShootType.PERFECT : ShootType.BACK_BOARD;
+        //this is a backboard shot
+        if (Mathf.Abs(distanceToGreen) > Mathf.Abs(distanceToBlue))
+        {
+            SessionData.Instance.verticalDistance = distanceToBlue/50;
+            return ShootType.BACK_BOARD;
+        }
+        //otherwise its an attempt to a perfect shot
+        SessionData.Instance.verticalDistance = distanceToGreen/50;
+        return ShootType.NET;
     }
     
     //utils----

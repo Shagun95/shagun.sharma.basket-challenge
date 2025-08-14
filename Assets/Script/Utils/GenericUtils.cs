@@ -50,4 +50,26 @@ public class GenericUtils
             max = rectTransform.TransformPoint(localRect.max)
         };
     }
+    
+    /// <summary>
+    /// Gives the vertical distance of 2 rect transform
+    /// </summary>
+    /// <param name="zone"></param>
+    /// <param name="pointer"></param>
+    /// <returns></returns>
+    public static float VerticalDistanceToRect(RectTransform zone, RectTransform pointer)
+    {
+        Rect zr = GetWorldRect(zone);
+        Rect pr = GetWorldRect(pointer);
+
+        float py = pr.center.y;
+
+        if (py < zr.yMin) 
+            return py - zr.yMin;
+
+        if (py > zr.yMax) 
+            return py - zr.yMax;
+        
+        return 0f;
+    }
 }

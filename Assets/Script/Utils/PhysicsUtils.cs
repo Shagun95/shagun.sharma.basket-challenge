@@ -7,10 +7,7 @@ using Random = UnityEngine.Random;
 /// </summary>
 public class PhysicsUtils
 {
-    /// <summary>
-    /// The offset to apply to touch the ring before going to the goal
-    /// </summary>
-    private static float ringOffset = 0.14f;
+    
     /// <summary>
     /// The offset to apply for a wrong shot
     /// </summary>
@@ -21,23 +18,24 @@ public class PhysicsUtils
     /// <summary>
     /// Shoot the ball toward the basket, including error handling
     /// </summary>
-    public static Vector3 ShootBall(Vector3 start, Vector3 target, float timeToTarget, ShootType type)
+    public static Vector3 ShootBall(Vector3 start, Vector3 target, float timeToTarget, ShootType shotType)
     {
-        Vector3 shot = VelocityToTarget(start, target, timeToTarget, type);
-        return ErrorHandling(shot, type);
+        return VelocityToTarget(start, target, timeToTarget, shotType);
     }
 
     /// <summary>
-    /// Calculate the velocity to apply to the ball, to reach the target
+    /// Calculate the velocity to apply to reach the target
     /// </summary>
     /// <param name="start"></param>
     /// <param name="target"></param>
     /// <param name="timeToTarget"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static Vector3 VelocityToTarget(Vector3 start, Vector3 target, float timeToTarget, ShootType type)
+    private static Vector3 VelocityToTarget(Vector3 start, Vector3 target, float timeToTarget, ShootType shootType)
     {
+        
         Vector3 toTarget = target - start;
+        
         //separates the "plane" distance to the y distance, they have different calculations
         Vector3 toTargetXZ = new Vector3(toTarget.x, 0, toTarget.z);
 
@@ -55,32 +53,59 @@ public class PhysicsUtils
         Vector3 forceToApply = toTargetXZ.normalized * xzVelocity;
         //the velocity to reach the target considering gravity at the right time
         forceToApply.y = yVelocity;
-
-        return forceToApply;
+        
+        return ShotWithForceCorrection(shootType, forceToApply);
     }
-    
-    
-    private static Vector3 ErrorHandling (Vector3 perfectShot, ShootType type)
+
+
+    /// <summary>
+    /// Will return the actual force to apply to the object, considering errors
+    /// </summary>
+    /// <param name="shootType"></param>
+    /// <param name="originalForce"></param>
+    /// <returns></returns>
+    private static Vector3 ShotWithForceCorrection(ShootType shootType, Vector3 originalForce)
     {
-        switch (type)
+        Vector3 restultForce = originalForce;
+        //if it's a ring shot, it's already managed
+        if (shootType == ShootType.RING)
+            return restultForce;
+        
+        //we need to see the actual distance of the pointer
+        float vDistance = Math.Abs(SessionData.Instance.verticalDistance);
+        
+        //the tolerance we set in the settingsdata
+        float tolerance = GameData.Instance.gameSettings.ImperfectShotTolerance;
+        
+        //if the cursor is in the perfect position, it's all managed
+        if (vDistance == 0)
+            return restultForce;
+        
+        //from this point on, we manage errors
+        
+        /*
+         * what we check: if we attempt a backboard, then it has to be perfectly aligned
+         * otherwise we apply an error
+         * for the net attempt, we check if the distance between the pointer and the green zone
+         * is greater then the tolerance we applied, also in this case we apply an error
+         */
+        if ((shootType == ShootType.BACK_BOARD && vDistance > 0)
+            || (shootType == ShootType.NET && vDistance > tolerance))
         {
-            case ShootType.PERFECT:
-                //no need to intervene
-                break;
-            case ShootType.RING:
-                perfectShot.x += Random.value < 0.5f ? ringOffset : -ringOffset;
-                break;
-            case ShootType.BACK_BOARD:
-                //todo most probably, if player aims for the board, on a wrong shot the ball should hit the board, like in the original game
-                break;
-            case ShootType.WRONG:
-                perfectShot.x += Random.value < 0.5f ? wrongShootOffset : -wrongShootOffset;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            restultForce += Vector3.left * (Random.Range(0, 10) > 5 ? -wrongShootOffset : wrongShootOffset);
         }
 
-        return perfectShot;
+        /*
+         * to give a more realistic experience, we calculate the amount of magnitude we want
+         * to add to our final vector, can be negative or positive, we set a max to 1 so the ball
+         * doesn't shoot too far away
+         */ 
+        float extraMagnitude = Mathf.Min(SessionData.Instance.verticalDistance, 1f);
+        
+        float newMagnitude = restultForce.magnitude + extraMagnitude;
+        restultForce = restultForce.normalized * newMagnitude;
+
+        return restultForce;
     }
 }
 

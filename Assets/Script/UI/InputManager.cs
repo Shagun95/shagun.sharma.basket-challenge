@@ -120,7 +120,6 @@ public class InputManager : MonoBehaviour
     /// <param name="pos"></param>
     private void StartSwipe(Vector2 pos)
     {
-        Debug.Log("Start swiping up");
         isSwiping = true;
         lastPos = pos;
         GenericUtils.StartTimer(GameData.Instance.gameSettings.BarTimer, EndSwipe);

@@ -10,12 +10,20 @@ public enum Position
 }
 
 /// <summary>
-/// Used for error handling
+/// Used for detecting score
 /// </summary>
 public enum ShootType 
 {
-    PERFECT,
+    /// <summary>
+    /// Perfect score
+    /// </summary>
+    NET,
+    /// <summary>
+    /// Touching the ring
+    /// </summary>
     RING,
-    BACK_BOARD,
-    WRONG
+    /// <summary>
+    /// Backboard bonus
+    /// </summary>
+    BACK_BOARD
 }

@@ -16,4 +16,8 @@ public class GameSettings : ScriptableObject
     
     [Tooltip("The time in which the launch bar will launch the ball automatically")]
     public float BarTimer;
+
+    [Tooltip("The tolerance in which the bar will give an imperfect shot")]
+    public float ImperfectShotTolerance;
+
 }

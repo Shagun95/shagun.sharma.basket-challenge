@@ -21,4 +21,9 @@ public class SessionData : Singleton<SessionData>
     /// Used to calculate at what setting the launchbar should be (green and blue zones)
     /// </summary>
     public int currentShootPositionIndex;
+
+    /// <summary>
+    /// The distance between the arrow pointer and the chosen target (net or backboard)
+    /// </summary>
+    public float verticalDistance;
 }
