@@ -53,10 +53,12 @@ public class ScoreFlyerController : MonoBehaviour
     private void SetText()
     {
         int points = SessionData.Instance.scoreToAdd;
-        //temporary bonus will be more then 0 only if active, if the player achieved a back board score, we can safely add it
-        if (SessionData.Instance.currentShootType == ShootType.BACK_BOARD )
+        //check if it is a temporary bonus
+        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
             points = SessionData.Instance.currentTemporaryBonus;
             
         ownText.text = $"+{points}";
     }
+
+    private SessionData sessionData => SessionData.Instance;
 }

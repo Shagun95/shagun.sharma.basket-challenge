@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     [SerializeField] 
     private List<Transform> postionsFlags;
 
-    [SerializeField, BoxGroup(" Transform References")]
+    [SerializeField, BoxGroup("Transform References")]
     private Transform playerTrasorm, camera, basketTransform;
 
     [SerializeField, BoxGroup("GUI Labels")] 
@@ -90,8 +90,8 @@ public class GameController : MonoBehaviour
     public void AddPlayerScore()
     {
         int points = sessionData.scoreToAdd;
-        //temporary bonus will be more then 0 only if active, if the player achieved a back board score, we can safely add it
-        if (sessionData.currentShootType == ShootType.BACK_BOARD)
+        //Check if it is a temporary backboard bonus
+        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
             points = sessionData.currentTemporaryBonus;
                 
         playerScore += points;
