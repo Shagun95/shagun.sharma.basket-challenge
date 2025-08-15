@@ -27,3 +27,9 @@ public enum ShootType
     /// </summary>
     BACK_BOARD
 }
+
+public enum BallOwner
+{
+    Player,
+    AI
+}

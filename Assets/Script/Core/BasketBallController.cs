@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class BasketBallController : MonoBehaviour
 {
-
-    public Vector3 testShake;
+    [SerializeField]
+    private BallOwner ballOwner;
 
     [SerializeField] private Rigidbody rb;
 
@@ -21,12 +21,12 @@ public class BasketBallController : MonoBehaviour
 
     private void OnEnable()
     {
-        EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ShootBall);
+        EVMLight.Subscribe(ballOwner == BallOwner.Player ? GameEvent.LAUNCH_BALL : GameEvent.AI_LAUNCHED_BALL, ShootBall);
     }
 
     private void OnDisable()
     {
-        EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ShootBall);
+        EVMLight.Unsubscribe(ballOwner == BallOwner.Player ? GameEvent.LAUNCH_BALL : GameEvent.AI_LAUNCHED_BALL, ShootBall);
     }
 
     private void Start()
@@ -34,27 +34,19 @@ public class BasketBallController : MonoBehaviour
         toleranceForRingShot = GameData.Instance.gameSettings.ImperfectShotTolerance;
     }
 
+    [Button("test shoot")]
     private void ShootBall()
     {
+        
         if (!SessionData.Instance.gameIsOn)
             return;
-        ShootBall(SessionData.Instance.currentShootType);
-    }
-
-    [Button("test shoot")]
-    private void ShootBall(ShootType type)
-    {
-        float vDistance = Mathf.Abs(SessionData.Instance.verticalDistance);
-        Debug.Log(vDistance);
-        SessionData.Instance.ballIsLaunching = true;
-        _currentShootType = type;
-
-        //first we set the right target
+        
+        float vDistance = 0;
         Vector3 target = basketTarget.position;
-
-        if (_currentShootType == ShootType.BACK_BOARD)
-            target = backBoardTarget.position;
-
+        
+        //first, we set the right values, checking if its an AI or the Player
+        SetCorrectData(ref vDistance, ref target);
+        
         /*
          * then we see if its a ring shot (imperfect)
          * to check this, we see if the player was closer to the green zone (perfect shot attempt)
@@ -76,7 +68,40 @@ public class BasketBallController : MonoBehaviour
 
 
         rb.velocity = PhysicsUtils.ShootBall(transform.position, target, timeToReachTarget,
-            _currentShootType);
+            _currentShootType, vDistance);
+    }
+
+    /// <summary>
+    /// Set the correct data checking if it is the player or the AI
+    /// </summary>
+    /// <param name="vDistance"></param>
+    /// <param name="target"></param>
+    private void SetCorrectData(ref float vDistance, ref Vector3 target)
+    {
+        if (ballOwner == BallOwner.Player)
+        {
+            vDistance = Mathf.Abs(SessionData.Instance.verticalDistance);
+            SessionData.Instance.ballIsLaunching = true;
+            _currentShootType = SessionData.Instance.currentShootType;
+
+            //first we set the right target
+            target = basketTarget.position;
+
+            if (_currentShootType == ShootType.BACK_BOARD)
+                target = backBoardTarget.position;
+        }
+
+        if (ballOwner == BallOwner.AI)
+        {
+            vDistance = Mathf.Abs(SessionData.Instance.AIVerticalDistance);
+            _currentShootType = SessionData.Instance.AIcurrentShootType;
+
+            //first we set the right target
+            target = basketTarget.position;
+
+            if (_currentShootType == ShootType.BACK_BOARD)
+                target = backBoardTarget.position;
+        }
     }
 
     [Button]
@@ -98,8 +123,17 @@ public class BasketBallController : MonoBehaviour
         if (other.gameObject.CompareTag("BasketTrigger"))
         {
             int points = PointByShoot();
-            SessionData.Instance.scoreToAdd = points;
-            EVMLight.Trigger(GameEvent.PLAYER_SCORED);
+            if (ballOwner == BallOwner.Player)
+            {
+                SessionData.Instance.scoreToAdd = points;
+                EVMLight.Trigger(GameEvent.PLAYER_SCORED);
+            }
+            else
+            {
+                SessionData.Instance.AIScoreToAdd = points;
+                EVMLight.Trigger(GameEvent.AI_SCORED);
+            }
+            
         }
 
         if (_currentShootType == ShootType.RING && other.gameObject.CompareTag("ShakeTrigger"))

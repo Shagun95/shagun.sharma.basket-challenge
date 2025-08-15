@@ -3,6 +3,7 @@ using MEC;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameController : MonoBehaviour
 {
@@ -11,43 +12,46 @@ public class GameController : MonoBehaviour
     private List<Transform> postionsFlags;
 
     [SerializeField, BoxGroup("Transform References")]
-    private Transform playerTrasorm, camera, basketTransform;
+    private Transform playerTrasorm, camera, basketTransform, AITransform;
 
     [SerializeField, BoxGroup("GUI Labels")] 
     private TextMeshProUGUI timeLabel, pointLabel;
 
+    [SerializeField, BoxGroup("GUI Labels")] 
+    private TextMeshProUGUI AIScoreLabel;
+
     [SerializeField, BoxGroup("Other References")]
-    private BasketBallController basketBallController;
+    private BasketBallController basketBallController, AIBasketballController;
 
     [SerializeField] 
     private TextMeshPro tmpBonusLabel;
 
     private RandomBonusSettings bonusSettings => GameData.Instance.randomBonusSettings;
-    private int currentPositionIndex;
+    private int playerPositionIndex, AIPositionIndex;
 
     [ShowInInspector]
     private int playerScore;
     [ShowInInspector]
-    private int opponentScore;
+    private int AIScore;
     
     private int timeRemaining;
-    
-    public int PlayerScore => playerScore;
-    public int OpponentScore => opponentScore;
-
     
 
     private void OnEnable()
     {
         EVMLight.Subscribe(GameEvent.PLAYER_SCORED, AddPlayerScore);
-        EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Subscribe(GameEvent.AI_SCORED, AddAIScore);
+        EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ManageTimerPlayer);
+        EVMLight.Subscribe(GameEvent.AI_LAUNCHED_BALL, ManageTimerAI);
         EVMLight.Subscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
     private void OnDisable()
     {
         EVMLight.Unsubscribe(GameEvent.PLAYER_SCORED, AddPlayerScore);
-        EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ManageTimer);
+        EVMLight.Unsubscribe(GameEvent.AI_SCORED, AddAIScore);
+        EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ManageTimerPlayer);
+        EVMLight.Unsubscribe(GameEvent.AI_LAUNCHED_BALL, ManageTimerAI);
         EVMLight.Unsubscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
@@ -64,15 +68,19 @@ public class GameController : MonoBehaviour
         SessionData.Instance.gameIsOn = false;
         SessionData.Instance.ballIsLaunching = false;
         SessionData.Instance.scoreForThisRound = playerScore;
-        currentPositionIndex = 0;
-        SetPostion();
+        ResetPositions();
         EVMLight.Trigger(GameEvent.GAME_FINISHED);
         
     }
 
-    private void ManageTimer()
+    private void ManageTimerPlayer()
     {
-        GenericUtils.StartTimer(gameSettings.TimeToNextPosition, GoToNextPostion);
+        GenericUtils.StartTimer(gameSettings.TimeToNextPosition, MovePlayerToNextPosition);
+    }
+    
+    private void ManageTimerAI()
+    {
+        GenericUtils.StartTimer(gameSettings.TimeToNextPosition, MoveAIToNextPosition);
     }
 
     /// <summary>
@@ -81,13 +89,13 @@ public class GameController : MonoBehaviour
     private void ResetGame()
     {
         playerScore = 0;
-        opponentScore = 0;
-        currentPositionIndex = 0;
+        AIScore = 0;
         pointLabel.text = $"{playerScore}";
-        SetPostion();
+        AIScoreLabel.text = $"{AIScore}";
+        ResetPositions();
     }
     
-    public void AddPlayerScore()
+    private void AddPlayerScore()
     {
         int points = sessionData.scoreToAdd;
         //Check if it is a temporary backboard bonus
@@ -98,30 +106,48 @@ public class GameController : MonoBehaviour
         pointLabel.text = $"{playerScore}";
     }
 
-    public void AddOpponentScore(int points) => opponentScore += points;
-
-    [Button]
-    private void GoToNextPostion()
+    private void AddAIScore()
     {
-        //manage "phantom" change positions when the game is already finished
-        if (!sessionData.gameIsOn)
-            return;
-        currentPositionIndex++;
-        SetPostion();
+        int points = sessionData.AIScoreToAdd;
+        //Check if it is a temporary backboard bonus
+        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
+            points = sessionData.currentTemporaryBonus;
+                
+        AIScore += points;
+        AIScoreLabel.text = $"{AIScore}";
     }
-
-    private void SetPostion()
+    
+    private void MovePlayerToNextPosition()
     {
-        if (currentPositionIndex > postionsFlags.Count-1)
-            currentPositionIndex = 0;
-        SessionData.Instance.currentShootPositionIndex = currentPositionIndex;
-        Vector3 currentPosition = postionsFlags[currentPositionIndex].position;
+        playerPositionIndex++;
+        
+        if (playerPositionIndex > postionsFlags.Count-1)
+            playerPositionIndex = 0;
+        SessionData.Instance.currentShootPositionIndex = playerPositionIndex;
+        Vector3 newPos = postionsFlags[playerPositionIndex].position;
         basketBallController.StopBallSpinning();
-        ChangePositionAndRotation(currentPosition, playerTrasorm);
-        ChangePositionAndRotation(currentPosition, basketBallController.GetOwnTrasnform, null, .14f);
-        ChangePositionAndRotation(currentPosition, camera, 5);
+        ChangePositionAndRotation(newPos, playerTrasorm);
+        ChangePositionAndRotation(newPos, basketBallController.GetOwnTrasnform, null, .14f);
+        ChangePositionAndRotation(newPos, camera, 5);
         ManageRandomBonus();
         SessionData.Instance.ballIsLaunching = false;
+        EVMLight.Trigger(GameEvent.POSITION_CHANGED);
+    }
+
+    private void MoveAIToNextPosition()
+    {
+        AIPositionIndex++;
+        if (AIPositionIndex >= postionsFlags.Count)
+            AIPositionIndex = 0;
+
+        Vector3 newPos = postionsFlags[AIPositionIndex].position; 
+        AIBasketballController.StopBallSpinning();
+        ChangePositionAndRotation(newPos, AITransform);
+        ChangePositionAndRotation(newPos, AIBasketballController.GetOwnTrasnform, null, .14f);
+
+        AITransform.Translate(Vector3.right * 1.5f, Space.Self);
+        AIBasketballController.GetOwnTrasnform.Translate(Vector3.right * 1.5f, Space.Self);
+        EVMLight.Trigger(GameEvent.AI_POSITION_CHANGED);
     }
 
     /// <summary>
@@ -183,10 +209,15 @@ public class GameController : MonoBehaviour
         
         if (zOffset.HasValue)
             target.position -= target.forward * zOffset.Value;
-        EVMLight.Trigger(GameEvent.POSITION_CHANGED);
-        
     }
 
+    private void ResetPositions()
+    {
+        playerPositionIndex = -1;
+        AIPositionIndex = -1;
+        MovePlayerToNextPosition();
+        MoveAIToNextPosition();
+    }
     private GameSettings gameSettings => GameData.Instance.gameSettings;
 
     private SessionData sessionData => SessionData.Instance;

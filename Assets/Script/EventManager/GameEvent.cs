@@ -19,5 +19,11 @@ public enum GameEvent
     /// <summary>
     /// Game is finished
     /// </summary>
-    GAME_FINISHED
+    GAME_FINISHED,
+    
+    AI_LAUNCHED_BALL,
+    
+    AI_SCORED,
+    
+    AI_POSITION_CHANGED
 }

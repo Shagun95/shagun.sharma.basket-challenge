@@ -8,7 +8,9 @@ public class SessionData : Singleton<SessionData>
     /// The shoot type currently achieved
     /// </summary>
     public ShootType currentShootType;
+    public ShootType AIcurrentShootType;
     public int scoreToAdd;
+    public int AIScoreToAdd;
     public int currentTemporaryBonus = 0;
     public bool gameIsOn = false;
     /// <summary>
@@ -26,4 +28,6 @@ public class SessionData : Singleton<SessionData>
     /// The distance between the arrow pointer and the chosen target (net or backboard)
     /// </summary>
     public float verticalDistance;
+
+    public float AIVerticalDistance;
 }

@@ -18,9 +18,9 @@ public class PhysicsUtils
     /// <summary>
     /// Shoot the ball toward the basket, including error handling
     /// </summary>
-    public static Vector3 ShootBall(Vector3 start, Vector3 target, float timeToTarget, ShootType shotType)
+    public static Vector3 ShootBall(Vector3 start, Vector3 target, float timeToTarget, ShootType shotType, float vDistance)
     {
-        return VelocityToTarget(start, target, timeToTarget, shotType);
+        return VelocityToTarget(start, target, timeToTarget, shotType, vDistance);
     }
 
     /// <summary>
@@ -31,7 +31,7 @@ public class PhysicsUtils
     /// <param name="timeToTarget"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    private static Vector3 VelocityToTarget(Vector3 start, Vector3 target, float timeToTarget, ShootType shootType)
+    private static Vector3 VelocityToTarget(Vector3 start, Vector3 target, float timeToTarget, ShootType shootType, float vDistance)
     {
         
         Vector3 toTarget = target - start;
@@ -54,7 +54,7 @@ public class PhysicsUtils
         //the velocity to reach the target considering gravity at the right time
         forceToApply.y = yVelocity;
         
-        return ShotWithForceCorrection(shootType, forceToApply);
+        return ShotWithForceCorrection(shootType, forceToApply, vDistance);
     }
 
 
@@ -64,15 +64,12 @@ public class PhysicsUtils
     /// <param name="shootType"></param>
     /// <param name="originalForce"></param>
     /// <returns></returns>
-    private static Vector3 ShotWithForceCorrection(ShootType shootType, Vector3 originalForce)
+    private static Vector3 ShotWithForceCorrection(ShootType shootType, Vector3 originalForce, float vDistance)
     {
         Vector3 restultForce = originalForce;
         //if it's a ring shot, it's already managed
         if (shootType == ShootType.RING)
             return restultForce;
-        
-        //we need to see the actual distance of the pointer
-        float vDistance = Math.Abs(SessionData.Instance.verticalDistance);
         
         //the tolerance we set in the settingsdata
         float tolerance = GameData.Instance.gameSettings.ImperfectShotTolerance;
@@ -100,7 +97,7 @@ public class PhysicsUtils
          * to add to our final vector, can be negative or positive, we set a max to 1 so the ball
          * doesn't shoot too far away
          */ 
-        float extraMagnitude = Mathf.Min(SessionData.Instance.verticalDistance, 1f);
+        float extraMagnitude = Mathf.Min(vDistance, 1f);
         
         float newMagnitude = restultForce.magnitude + extraMagnitude;
         restultForce = restultForce.normalized * newMagnitude;
