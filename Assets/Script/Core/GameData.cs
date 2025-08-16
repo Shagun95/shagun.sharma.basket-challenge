@@ -10,4 +10,7 @@ public class GameData : Singleton<GameData>
 
     [Required]
     public RandomBonusSettings randomBonusSettings;
+
+    [Required]
+    public AIProfiling AIProfiling;
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SessionData : Singleton<SessionData>
 {
@@ -18,7 +19,8 @@ public class SessionData : Singleton<SessionData>
     /// </summary>
     public bool ballIsLaunching = false;
 
-    public int scoreForThisRound;
+    public int playerScoreForThisRound;
+    public int AIScoreForThisRound;
     /// <summary>
     /// Used to calculate at what setting the launchbar should be (green and blue zones)
     /// </summary>
@@ -30,4 +32,6 @@ public class SessionData : Singleton<SessionData>
     public float verticalDistance;
 
     public float AIVerticalDistance;
+
+    public AI_LEVEL currentAILevel;
 }

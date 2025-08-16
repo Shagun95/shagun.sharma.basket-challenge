@@ -2,6 +2,7 @@ using System;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIFlowManager : MonoBehaviour
@@ -21,7 +22,7 @@ public class UIFlowManager : MonoBehaviour
 
     [BoxGroup("Labels")] 
     [SerializeField]
-    private TextMeshProUGUI scoreLabel;
+    private TextMeshProUGUI plaeyrScoreLabel, AIScoreLabel, resultDescriptionLabel;
 
     /// <summary>
     /// Let's use an enum to organize the panels flow
@@ -66,7 +67,11 @@ public class UIFlowManager : MonoBehaviour
 
     private void OnGameFinished()
     {
-        scoreLabel.text = $"{SessionData.Instance.scoreForThisRound}";
+        int playerScore = SessionData.Instance.playerScoreForThisRound;
+        int AIScore = SessionData.Instance.AIScoreToAdd;
+        resultDescriptionLabel.text = playerScore > AIScore ? "YOU WON!" : "YOU LOST!";
+        plaeyrScoreLabel.text = $"{playerScore}";
+        AIScoreLabel.text = $"{AIScore}";
         NavigateToPanel(Panel.Reward);
     }
 

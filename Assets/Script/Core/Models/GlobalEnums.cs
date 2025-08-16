@@ -28,8 +28,22 @@ public enum ShootType
     BACK_BOARD
 }
 
+/// <summary>
+/// The owner of the ball, will trigger different events
+/// </summary>
 public enum BallOwner
 {
     Player,
     AI
+}
+
+/// <summary>
+/// Level from easier to harder for AI
+/// </summary>
+public enum AI_LEVEL
+{
+    EASY,
+    MEDIUM,
+    HARD,
+    LEGEND
 }

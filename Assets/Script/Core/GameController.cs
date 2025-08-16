@@ -57,20 +57,23 @@ public class GameController : MonoBehaviour
 
     private void StartGame()
     {
+        sessionData.currentAILevel = AI_LEVEL.EASY;
         ResetGame();
         timeRemaining = gameSettings.GameTime;
         Timing.RunCoroutine(StartGameTimer());
-        SessionData.Instance.gameIsOn = true;
+        sessionData.gameIsOn = true;
     }
 
     private void EndGame()
     {
-        SessionData.Instance.gameIsOn = false;
-        SessionData.Instance.ballIsLaunching = false;
-        SessionData.Instance.scoreForThisRound = playerScore;
+        sessionData.gameIsOn = false;
+        sessionData.ballIsLaunching = false;
+        sessionData.playerScoreForThisRound = playerScore;
+        sessionData.AIScoreForThisRound = AIScore;
         ResetPositions();
+        //prevent previous coroutines to still affect behaviours
+        Timing.KillCoroutines();
         EVMLight.Trigger(GameEvent.GAME_FINISHED);
-        
     }
 
     private void ManageTimerPlayer()
@@ -123,14 +126,14 @@ public class GameController : MonoBehaviour
         
         if (playerPositionIndex > postionsFlags.Count-1)
             playerPositionIndex = 0;
-        SessionData.Instance.currentShootPositionIndex = playerPositionIndex;
+        sessionData.currentShootPositionIndex = playerPositionIndex;
         Vector3 newPos = postionsFlags[playerPositionIndex].position;
         basketBallController.StopBallSpinning();
         ChangePositionAndRotation(newPos, playerTrasorm);
         ChangePositionAndRotation(newPos, basketBallController.GetOwnTrasnform, null, .14f);
         ChangePositionAndRotation(newPos, camera, 5);
         ManageRandomBonus();
-        SessionData.Instance.ballIsLaunching = false;
+        sessionData.ballIsLaunching = false;
         EVMLight.Trigger(GameEvent.POSITION_CHANGED);
     }
 
@@ -159,14 +162,14 @@ public class GameController : MonoBehaviour
         {
             
             int tmpBonus = bonusSettings.GetRandomBonus();
-            SessionData.Instance.currentTemporaryBonus = tmpBonus;
+            sessionData.currentTemporaryBonus = tmpBonus;
             tmpBonusLabel.gameObject.SetActive(true);
             tmpBonusLabel.text = $"+{tmpBonus}";
         }
         else
         {
             tmpBonusLabel.gameObject.SetActive(false);
-            SessionData.Instance.currentTemporaryBonus = 0;
+            sessionData.currentTemporaryBonus = 0;
         }
     }
     
@@ -218,6 +221,13 @@ public class GameController : MonoBehaviour
         MovePlayerToNextPosition();
         MoveAIToNextPosition();
     }
+
+    [Button]
+    private void ChangeAIDifficulty(AI_LEVEL lv)
+    {
+        sessionData.currentAILevel = lv;
+    }
+    
     private GameSettings gameSettings => GameData.Instance.gameSettings;
 
     private SessionData sessionData => SessionData.Instance;

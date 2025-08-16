@@ -20,10 +20,16 @@ public enum GameEvent
     /// Game is finished
     /// </summary>
     GAME_FINISHED,
-    
+    /// <summary>
+    /// AI has launched the ball
+    /// </summary>
     AI_LAUNCHED_BALL,
-    
+    /// <summary>
+    /// AI scored a point
+    /// </summary>
     AI_SCORED,
-    
+    /// <summary>
+    /// AI moved to new position
+    /// </summary>
     AI_POSITION_CHANGED
 }

@@ -90,9 +90,9 @@ public class BasketBallController : MonoBehaviour
             if (_currentShootType == ShootType.BACK_BOARD)
                 target = backBoardTarget.position;
         }
-
-        if (ballOwner == BallOwner.AI)
-        {
+        else
+        {   
+            //IF AI--
             vDistance = Mathf.Abs(SessionData.Instance.AIVerticalDistance);
             _currentShootType = SessionData.Instance.AIcurrentShootType;
 
@@ -130,6 +130,7 @@ public class BasketBallController : MonoBehaviour
             }
             else
             {
+                //IF AI--
                 SessionData.Instance.AIScoreToAdd = points;
                 EVMLight.Trigger(GameEvent.AI_SCORED);
             }
@@ -170,7 +171,7 @@ public class BasketBallController : MonoBehaviour
 
 
     /// <summary>
-    /// Will take in consideration temporary bonus
+    /// Calculates the correct points to add
     /// </summary>
     /// <returns></returns>
     private int PointByShoot()
