@@ -31,5 +31,13 @@ public enum GameEvent
     /// <summary>
     /// AI moved to new position
     /// </summary>
-    AI_POSITION_CHANGED
+    AI_POSITION_CHANGED,
+    /// <summary>
+    /// The fireball mode changed status
+    /// </summary>
+    FIREBALL_MODE_CHANGED,
+    /// <summary>
+    /// Player missed a shot
+    /// </summary>
+    MISSED_SHOT,
 }

@@ -19,3 +19,5 @@ MonoBehaviour:
   ImperfectShotTolerance: 0.2
   BarSensitivityAndroid: 0.7
   BarSensitivityDesktop: 1
+  fireballTesholdValue: 3
+  fireballTimer: 10

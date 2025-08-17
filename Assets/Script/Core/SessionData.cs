@@ -34,4 +34,6 @@ public class SessionData : Singleton<SessionData>
     public float AIVerticalDistance;
 
     public AI_LEVEL currentAILevel;
+
+    public bool fireModeIsActive;
 }

@@ -3,10 +3,10 @@ using MEC;
 using Sirenix.OdinInspector;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GameController : MonoBehaviour
 {
+    #region Serialized Fields
 
     [SerializeField] 
     private List<Transform> postionsFlags;
@@ -26,7 +26,18 @@ public class GameController : MonoBehaviour
     [SerializeField] 
     private TextMeshPro tmpBonusLabel;
 
+    #endregion
+
+    #region Properties
+
     private RandomBonusSettings bonusSettings => GameData.Instance.randomBonusSettings;
+    private GameSettings gameSettings => GameData.Instance.gameSettings;
+    private SessionData sessionData => SessionData.Instance;
+
+    #endregion
+
+    #region State
+
     private int playerPositionIndex, AIPositionIndex;
 
     [ShowInInspector]
@@ -35,7 +46,15 @@ public class GameController : MonoBehaviour
     private int AIScore;
     
     private int timeRemaining;
-    
+
+    /// <summary>
+    /// We check though thi if we have a missed shot
+    /// </summary>
+    private bool playerScoredInThisShot;
+
+    #endregion
+
+    #region Subscriptions
 
     private void OnEnable()
     {
@@ -55,10 +74,14 @@ public class GameController : MonoBehaviour
         EVMLight.Unsubscribe(GameEvent.GAME_STARTED, StartGame);
     }
 
+    #endregion
+
+    #region Game Flow
+
     private void StartGame()
     {
-        sessionData.currentAILevel = AI_LEVEL.EASY;
         ResetGame();
+        sessionData.currentAILevel = AI_LEVEL.EASY;
         timeRemaining = gameSettings.GameTime;
         Timing.RunCoroutine(StartGameTimer());
         sessionData.gameIsOn = true;
@@ -71,13 +94,28 @@ public class GameController : MonoBehaviour
         sessionData.playerScoreForThisRound = playerScore;
         sessionData.AIScoreForThisRound = AIScore;
         ResetPositions();
-        //prevent previous coroutines to still affect behaviours
+        //prevent previous coroutines from still affecting behaviours
         Timing.KillCoroutines();
         EVMLight.Trigger(GameEvent.GAME_FINISHED);
     }
 
+    private void ResetGame()
+    {
+        playerScoredInThisShot = false;
+        playerScore = 0;
+        AIScore = 0;
+        pointLabel.text = $"{playerScore}";
+        AIScoreLabel.text = $"{AIScore}";
+        ResetPositions();
+    }
+
+    #endregion
+
+    #region Timers & Position Change
+
     private void ManageTimerPlayer()
     {
+        playerScoredInThisShot = false;
         GenericUtils.StartTimer(gameSettings.TimeToNextPosition, MovePlayerToNextPosition);
     }
     
@@ -87,42 +125,32 @@ public class GameController : MonoBehaviour
     }
 
     /// <summary>
-    /// Reset all values to default
+    /// Since we use a label to update a timer, I decided not to use the
+    /// generic method in the Utils
     /// </summary>
-    private void ResetGame()
+    /// <returns></returns>
+    private IEnumerator<float> StartGameTimer()
     {
-        playerScore = 0;
-        AIScore = 0;
-        pointLabel.text = $"{playerScore}";
-        AIScoreLabel.text = $"{AIScore}";
-        ResetPositions();
-    }
-    
-    private void AddPlayerScore()
-    {
-        int points = sessionData.scoreToAdd;
-        //Check if it is a temporary backboard bonus
-        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
-            points = sessionData.currentTemporaryBonus;
-                
-        playerScore += points;
-        pointLabel.text = $"{playerScore}";
+        while (timeRemaining > 0)
+        {
+            timeLabel.text = GenericUtils.FormatTime(timeRemaining);
+            yield return Timing.WaitForSeconds(1f);
+            timeRemaining--;
+        }
+
+        timeLabel.text = GenericUtils.FormatTime(0);
+        EndGame();
     }
 
-    private void AddAIScore()
-    {
-        int points = sessionData.AIScoreToAdd;
-        //Check if it is a temporary backboard bonus
-        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
-            points = sessionData.currentTemporaryBonus;
-                
-        AIScore += points;
-        AIScoreLabel.text = $"{AIScore}";
-    }
-    
     private void MovePlayerToNextPosition()
     {
         playerPositionIndex++;
+
+        //we had a missed shot
+        if (!playerScoredInThisShot)
+        {
+            EVMLight.Trigger(GameEvent.MISSED_SHOT);
+        }
         
         if (playerPositionIndex > postionsFlags.Count-1)
             playerPositionIndex = 0;
@@ -153,6 +181,49 @@ public class GameController : MonoBehaviour
         EVMLight.Trigger(GameEvent.AI_POSITION_CHANGED);
     }
 
+    private void ResetPositions()
+    {
+        playerPositionIndex = -1;
+        AIPositionIndex = -1;
+        MovePlayerToNextPosition();
+        MoveAIToNextPosition();
+    }
+
+    #endregion
+
+    #region Scoring
+
+    private void AddPlayerScore()
+    {
+        playerScoredInThisShot = true;
+        
+        int points = sessionData.scoreToAdd;
+        //Check if it is a temporary backboard bonus
+        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
+            points = sessionData.currentTemporaryBonus;
+
+        if (sessionData.fireModeIsActive)
+            points *= 2;
+        
+        playerScore += points;
+        pointLabel.text = $"{playerScore}";
+    }
+
+    private void AddAIScore()
+    {
+        int points = sessionData.AIScoreToAdd;
+        //Check if it is a temporary backboard bonus
+        if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
+            points = sessionData.currentTemporaryBonus;
+                
+        AIScore += points;
+        AIScoreLabel.text = $"{AIScore}";
+    }
+
+    #endregion
+
+    #region Bonus
+
     /// <summary>
     /// Check if there is a backboard bonus for this shot
     /// </summary>
@@ -172,26 +243,11 @@ public class GameController : MonoBehaviour
             sessionData.currentTemporaryBonus = 0;
         }
     }
-    
-    /// <summary>
-    /// Since we use a label to update a timer, I decided not to use the
-    /// generic method in the Utils
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator<float> StartGameTimer()
-    {
-        while (timeRemaining > 0)
-        {
-            timeLabel.text = GenericUtils.FormatTime(timeRemaining);
-            yield return Timing.WaitForSeconds(1f);
-            timeRemaining--;
-        }
 
-        timeLabel.text = GenericUtils.FormatTime(0);
-        EndGame();
-    }
-
+    #endregion
     
+    #region Utilities
+
     private void ChangePositionAndRotation(Vector3 pos, Transform target, float? zOffset = null, float? customYPosition = null)
     {
         if (customYPosition.HasValue)
@@ -214,21 +270,11 @@ public class GameController : MonoBehaviour
             target.position -= target.forward * zOffset.Value;
     }
 
-    private void ResetPositions()
-    {
-        playerPositionIndex = -1;
-        AIPositionIndex = -1;
-        MovePlayerToNextPosition();
-        MoveAIToNextPosition();
-    }
-
     [Button]
     private void ChangeAIDifficulty(AI_LEVEL lv)
     {
         sessionData.currentAILevel = lv;
     }
-    
-    private GameSettings gameSettings => GameData.Instance.gameSettings;
 
-    private SessionData sessionData => SessionData.Instance;
+    #endregion
 }

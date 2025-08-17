@@ -55,8 +55,10 @@ public class ScoreFlyerController : MonoBehaviour
         int points = SessionData.Instance.scoreToAdd;
         //check if it is a temporary bonus
         if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
-            points = SessionData.Instance.currentTemporaryBonus;
-            
+            points = sessionData.currentTemporaryBonus;
+
+        if (sessionData.fireModeIsActive)
+            points *= 2;
         ownText.text = $"+{points}";
     }
 

@@ -6,10 +6,15 @@ public class BasketBallController : MonoBehaviour
     [SerializeField]
     private BallOwner ballOwner;
 
-    [SerializeField] private Rigidbody rb;
+    [SerializeField, BoxGroup("Reference")]
+    private Rigidbody rb;
 
-    [SerializeField] private Transform basketTarget, backBoardTarget;
+    [SerializeField, BoxGroup("Reference")] private Transform basketTarget, backBoardTarget;
 
+
+    [SerializeField, BoxGroup("Particle")] 
+    private ParticleSystem particleGlow, particleTrail;
+    
     private float toleranceForRingShot;
 
     public Transform GetOwnTrasnform => GetComponent<Transform>();
@@ -21,12 +26,29 @@ public class BasketBallController : MonoBehaviour
 
     private void OnEnable()
     {
-        EVMLight.Subscribe(ballOwner == BallOwner.Player ? GameEvent.LAUNCH_BALL : GameEvent.AI_LAUNCHED_BALL, ShootBall);
+        if (ballOwner == BallOwner.Player)
+        {
+            EVMLight.Subscribe(GameEvent.LAUNCH_BALL, ShootBall);
+            EVMLight.Subscribe(GameEvent.FIREBALL_MODE_CHANGED, FireballVFX);
+        }
+        else
+        {
+            EVMLight.Subscribe(GameEvent.AI_LAUNCHED_BALL, ShootBall);
+        }
+        
     }
 
     private void OnDisable()
     {
-        EVMLight.Unsubscribe(ballOwner == BallOwner.Player ? GameEvent.LAUNCH_BALL : GameEvent.AI_LAUNCHED_BALL, ShootBall);
+        if (ballOwner == BallOwner.Player)
+        {
+            EVMLight.Unsubscribe(GameEvent.LAUNCH_BALL, ShootBall);
+            EVMLight.Unsubscribe(GameEvent.FIREBALL_MODE_CHANGED, FireballVFX);
+        }
+        else
+        {
+            EVMLight.Unsubscribe(GameEvent.AI_LAUNCHED_BALL, ShootBall);
+        }
     }
 
     private void Start()
@@ -183,5 +205,22 @@ public class BasketBallController : MonoBehaviour
             return 2;
 
         return 0;
+    }
+    
+    /// <summary>
+    /// Manage the fireball effects
+    /// </summary>
+    private void FireballVFX()
+    {
+        if (SessionData.Instance.fireModeIsActive)
+        {
+            particleGlow.Play();
+            particleTrail.Play();
+        }
+        else
+        {
+            particleGlow.Stop();
+            particleTrail.Stop();
+        }
     }
 }
