@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
+using Coffee.UIEffects;
 
 public class UIFlowManager : MonoBehaviour
 {

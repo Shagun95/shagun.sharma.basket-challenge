@@ -1,9 +1,6 @@
-﻿// Copyright (C) 2015-2021 gamevanilla - All rights reserved.
-// This code can only be used under the standard Unity Asset Store End User License Agreement.
-// A Copy of the Asset Store EULA is available at http://unity3d.com/company/legal/as_terms.
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace UltimateClean
 {
@@ -24,6 +21,8 @@ namespace UltimateClean
         private Image handleDisabledImage;
 
         private bool switchEnabled; 
+
+        public UnityEvent<bool> OnValueChanged;
 
         private void Awake()
         {
@@ -51,26 +50,33 @@ namespace UltimateClean
         public void Toggle()
         {
             switchEnabled = !switchEnabled;
-            if (switchEnabled)
-            {
-                bgDisabledImage.gameObject.SetActive(false);
-                bgEnabledImage.gameObject.SetActive(true);
-                handleDisabledImage.gameObject.SetActive(false);
-                handleEnabledImage.gameObject.SetActive(true);
-            }
-            else
-            {
-                bgEnabledImage.gameObject.SetActive(false);
-                bgDisabledImage.gameObject.SetActive(true);
-                handleEnabledImage.gameObject.SetActive(false);
-                handleDisabledImage.gameObject.SetActive(true);
-            }
+            bgEnabledImage.gameObject.SetActive(switchEnabled);
+            bgDisabledImage.gameObject.SetActive(!switchEnabled);
+            handleEnabledImage.gameObject.SetActive(switchEnabled);
+            handleDisabledImage.gameObject.SetActive(!switchEnabled);
             animator.SetTrigger(switchEnabled ? "Enable" : "Disable");
+            OnValueChanged?.Invoke(switchEnabled);
         }
 
         public bool IsToggled()
         {
             return switchEnabled;
+        }
+        public void SetState(bool state, bool invokeEvent = true)
+        {
+            if (switchEnabled == state) return;
+
+            switchEnabled = state;
+
+            bgEnabledImage.gameObject.SetActive(switchEnabled);
+            bgDisabledImage.gameObject.SetActive(!switchEnabled);
+            handleEnabledImage.gameObject.SetActive(switchEnabled);
+            handleDisabledImage.gameObject.SetActive(!switchEnabled);
+
+            animator.SetTrigger(switchEnabled ? "Enable" : "Disable");
+
+            if (invokeEvent)
+                OnValueChanged?.Invoke(switchEnabled);
         }
     }
 }
