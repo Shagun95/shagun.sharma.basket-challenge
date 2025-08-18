@@ -16,8 +16,6 @@ MonoBehaviour:
   TimeToLaunchBall: 2
   GameTime: 120
   BarTimer: 1
-  ImperfectShotTolerance: 0.2
+  ImperfectShotTolerance: 1
   BarSensitivityAndroid: 0.7
   BarSensitivityDesktop: 1
-  fireballTesholdValue: 3
-  fireballTimer: 10
