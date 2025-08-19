@@ -70,6 +70,7 @@ public class UIFlowManager : MonoBehaviour
     {
         int playerScore = SessionData.Instance.playerScoreForThisRound;
         int AIScore = SessionData.Instance.AIScoreToAdd;
+        //improve colors etx
         resultDescriptionLabel.text = playerScore > AIScore ? "YOU WON!" : "YOU LOST!";
         plaeyrScoreLabel.text = $"{playerScore}";
         AIScoreLabel.text = $"{AIScore}";

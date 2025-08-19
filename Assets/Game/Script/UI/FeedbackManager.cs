@@ -1,9 +1,8 @@
-using Coffee.UIExtensions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
 /// <summary>
-/// Manage all the visual feedbacks baed on events
+/// Manage all the visual feedbacks based on events
 /// </summary>
 public class FeedbackManager : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class FeedbackManager : MonoBehaviour
     [SerializeField, BoxGroup("Sound")]
     private AudioClip score, lost, applause;
 
-    private bool audioIsOn => SessionData.Instance.soundOn;
+    private bool audioIsOn => SessionData.Instance.audioOn;
 
     private void OnEnable()
     {
@@ -31,6 +30,9 @@ public class FeedbackManager : MonoBehaviour
         EVMLight.Unsubscribe(GameEvent.GAME_FINISHED, GameFinishedParticle);
     }
 
+    /// <summary>
+    /// Player scored
+    /// </summary>
     private void PlayerScoredEffects()
     {
         if (audioIsOn)
@@ -39,6 +41,9 @@ public class FeedbackManager : MonoBehaviour
         basketParticle.Play();
     }
 
+    /// <summary>
+    /// Game is finished, manage win and lose cases
+    /// </summary>
     private void GameFinishedParticle()
     {
         if (SessionData.Instance.playerScoreForThisRound > SessionData.Instance.AIScoreForThisRound)

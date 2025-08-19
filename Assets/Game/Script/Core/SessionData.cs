@@ -1,17 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Serialization;
-
+/// <summary>
+/// This will be the main comunication system between script/components
+/// changes are notified though our custom event system and data are handled
+/// globally here
+/// </summary>
 public class SessionData : Singleton<SessionData>
 {
     /// <summary>
     /// The shoot type currently achieved
     /// </summary>
     public ShootType currentShootType;
+    /// <summary>
+    /// Same for AI
+    /// </summary>
     public ShootType AIcurrentShootType;
     public int scoreToAdd;
     public int AIScoreToAdd;
+    /// <summary>
+    /// The bonus set with the backboard shot
+    /// </summary>
     public int currentTemporaryBonus = 0;
     public bool gameIsOn = false;
     /// <summary>
@@ -36,6 +42,6 @@ public class SessionData : Singleton<SessionData>
     public AI_LEVEL currentAILevel;
 
     public bool fireModeIsActive;
-
-    public bool soundOn;
+    
+    public bool audioOn;
 }

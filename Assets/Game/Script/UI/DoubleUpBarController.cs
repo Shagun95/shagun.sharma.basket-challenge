@@ -16,6 +16,7 @@ public class DoubleUpBarController : MonoBehaviour
     [SerializeField, BoxGroup("Settings"), Tooltip("How much the bar decrease over time")]
     private float decreaseValue;
 
+    
     private SessionData sessionData => SessionData.Instance;
     private CoroutineHandle sliderRoutine;
 
@@ -35,6 +36,9 @@ public class DoubleUpBarController : MonoBehaviour
         Timing.KillCoroutines(sliderRoutine);
     }
 
+    /// <summary>
+    /// Starts the decrease process of the bar
+    /// </summary>
     private void StartSliderDecrease()
     {
         slider.fillAmount = 0f;
@@ -42,6 +46,9 @@ public class DoubleUpBarController : MonoBehaviour
         sliderRoutine = Timing.RunCoroutine(SliderDecrease());
     }
 
+    /// <summary>
+    /// At every shot, an amont is added to the bar
+    /// </summary>
     private void FillBar()
     {
         if (sessionData.fireModeIsActive)
@@ -53,6 +60,10 @@ public class DoubleUpBarController : MonoBehaviour
             ActivateFireMode();
     }
 
+    /// <summary>
+    /// Routine that will handle the decrease process
+    /// </summary>
+    /// <returns>the handler to kill once the session is finished</returns>
     private IEnumerator<float> SliderDecrease()
     {
         while (true)

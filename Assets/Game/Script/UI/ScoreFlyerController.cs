@@ -1,15 +1,16 @@
 using TMPro;
 using UnityEngine;
 using DG.Tweening;
+using Sirenix.OdinInspector;
 
 public class ScoreFlyerController : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeField, BoxGroup("Reference")]
     private TextMeshProUGUI ownText;
     
-    [SerializeField]
+    [SerializeField, BoxGroup("Settings")]
     private float moveDistance = 100f;
-    [SerializeField]
+    [SerializeField, BoxGroup("Settings")]
     private float duration = 1f;
 
     private Vector2 initPos;
@@ -26,6 +27,7 @@ public class ScoreFlyerController : MonoBehaviour
 
     private void Start()
     {
+        //set initial data
         initPos = transform.position;
         ownText.alpha = 0;
     }
@@ -64,6 +66,7 @@ public class ScoreFlyerController : MonoBehaviour
         if (sessionData.fireModeIsActive)
             points *= 2;
         
+        //this can be improved (different colors etc...)
         ownText.text = isPerfectScore 
             ? $"<size=50%>PERFECT SCORE!!!</size>\n+{points}" 
             : $"+{points}";

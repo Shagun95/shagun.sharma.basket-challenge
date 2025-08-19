@@ -186,7 +186,6 @@ public class InputManager : MonoBehaviour
     private float GetBarSensitivity()
     {
         return GameData.Instance.gameSettings.BarSensitivity;
-        //return baseSensitivity * Screen.height;
     }
     
     #endregion

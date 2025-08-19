@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using Sirenix.OdinInspector;
-using UnityEngine;
 
+/// <summary>
+/// These are the main settings reference of the game, easily
+/// accessible globally
+/// </summary>
 public class GameData : Singleton<GameData>
 {
     [Required]

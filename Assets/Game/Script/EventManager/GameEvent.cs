@@ -1,3 +1,6 @@
+/// <summary>
+/// Events used to notify changes thouought the game flow
+/// </summary>
 public enum GameEvent
 {
     /// <summary>

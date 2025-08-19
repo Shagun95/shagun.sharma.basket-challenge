@@ -26,7 +26,7 @@ namespace UltimateClean
         public void PlayPressedSound()
         {
             audioSource.clip = pressedSound;
-            if (SessionData.Instance.soundOn)
+            if (SessionData.Instance.audioOn)
                 audioSource.Play();
             
         }
@@ -34,7 +34,7 @@ namespace UltimateClean
         public void PlayRolloverSound()
         {
             audioSource.clip = rolloverSound;
-            if (SessionData.Instance.soundOn)
+            if (SessionData.Instance.audioOn)
                 audioSource.Play();
         }
     }

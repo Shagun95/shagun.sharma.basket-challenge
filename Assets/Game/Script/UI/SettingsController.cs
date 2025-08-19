@@ -57,6 +57,7 @@ public class SettingsController : MonoBehaviour
     
     private void Start()
     {
+        //set default values
         audioOn = PlayerPrefs.GetInt("AUDIO", 1) == 1;
         musicOn =  PlayerPrefs.GetInt("MUSIC", 1) == 1;
         
@@ -98,7 +99,8 @@ public class SettingsController : MonoBehaviour
     public void ManageAudio(bool state)
     {
         audioOn = state;
-        sessionData.soundOn = audioOn;
+        //we set also this to have a faster way to access this information for various effects in the game
+        sessionData.audioOn = audioOn;
         SavePref();
     }
 

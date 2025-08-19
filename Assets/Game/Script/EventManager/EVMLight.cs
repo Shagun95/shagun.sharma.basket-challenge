@@ -1,6 +1,10 @@
 using System;
 using System.Collections.Generic;
 
+/// <summary>
+/// Lightweight and efficent event system with no parameters, works closely
+/// with the SessionData to handle comunications
+/// </summary>
 public static class EVMLight
 {
     private static Dictionary<GameEvent, Delegate> eventTable = new ();
