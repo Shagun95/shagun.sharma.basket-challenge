@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TimeToNextPosition: 3
   TimeToLaunchBall: 2
-  GameTime: 10
+  GameTime: 120
   BarTimer: 1
   ImperfectShotTolerance: 0.5
   BarSensitivity: 1

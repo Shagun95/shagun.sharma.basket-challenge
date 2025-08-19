@@ -69,7 +69,7 @@ public class UIFlowManager : MonoBehaviour
     private void OnGameFinished()
     {
         int playerScore = SessionData.Instance.playerScoreForThisRound;
-        int AIScore = SessionData.Instance.AIScoreToAdd;
+        int AIScore = SessionData.Instance.AIScoreForThisRound;
         //improve colors etx
         resultDescriptionLabel.text = playerScore > AIScore ? "YOU WON!" : "YOU LOST!";
         plaeyrScoreLabel.text = $"{playerScore}";
