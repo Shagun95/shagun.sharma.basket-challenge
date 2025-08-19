@@ -26,13 +26,16 @@ namespace UltimateClean
         public void PlayPressedSound()
         {
             audioSource.clip = pressedSound;
-            audioSource.Play();
+            if (SessionData.Instance.soundOn)
+                audioSource.Play();
+            
         }
 
         public void PlayRolloverSound()
         {
             audioSource.clip = rolloverSound;
-            audioSource.Play();
+            if (SessionData.Instance.soundOn)
+                audioSource.Play();
         }
     }
 }

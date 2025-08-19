@@ -36,4 +36,6 @@ public class SessionData : Singleton<SessionData>
     public AI_LEVEL currentAILevel;
 
     public bool fireModeIsActive;
+
+    public bool soundOn;
 }

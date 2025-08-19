@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a253d16822c924d5985926d81a87a62d, type: 3}
+  m_Name: PrototypingSettings
+  m_EditorClassIdentifier: 
+  TimeToNextPosition: 3
+  TimeToLaunchBall: 2
+  GameTime: 10
+  BarTimer: 1
+  ImperfectShotTolerance: 0.5
+  BarSensitivity: 1

@@ -60,10 +60,12 @@ public class SettingsController : MonoBehaviour
         audioOn = PlayerPrefs.GetInt("AUDIO", 1) == 1;
         musicOn =  PlayerPrefs.GetInt("MUSIC", 1) == 1;
         
-        MusicSwitch.SetState(audioOn, false);
+        sessionData.currentAILevel = AI_LEVEL.EASY;
+        
+        MusicSwitch.SetState(musicOn, false);
         AudioSwitch.SetState(audioOn, false);
         
-        ManageMusic(audioOn);
+        ManageMusic(musicOn);
         ManageAudio(audioOn);
     }
 
@@ -90,11 +92,14 @@ public class SettingsController : MonoBehaviour
         {
             music.Stop();
         }
+        SavePref();
     }
     
     public void ManageAudio(bool state)
     {
         audioOn = state;
+        sessionData.soundOn = audioOn;
+        SavePref();
     }
 
     private void OpenPopup()
@@ -109,5 +114,11 @@ public class SettingsController : MonoBehaviour
 
     private SessionData sessionData => SessionData.Instance;
 
+    private void SavePref()
+    {
+        PlayerPrefs.SetInt("AUDIO", audioOn ? 1 : 0);
+        PlayerPrefs.SetInt("MUSIC", musicOn ? 1 : 0);
+        PlayerPrefs.Save();
+    }
 
 }

@@ -9,13 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a253d16822c924d5985926d81a87a62d, type: 3}
-  m_Name: PrototypingSettings
+  m_Script: {fileID: 11500000, guid: f22a23b9d98e440478697f4adf30e61c, type: 3}
+  m_Name: UIParticleProjectSettings
   m_EditorClassIdentifier: 
-  TimeToNextPosition: 3
-  TimeToLaunchBall: 2
-  GameTime: 120
-  BarTimer: 1
-  ImperfectShotTolerance: 1
-  BarSensitivityAndroid: 0.7
-  BarSensitivityDesktop: 1
+  m_EnableLinearToGamma: 1
+  m_HideGeneratedObjects: 1

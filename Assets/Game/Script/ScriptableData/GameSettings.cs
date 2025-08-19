@@ -21,9 +21,5 @@ public class GameSettings : ScriptableObject
     public float ImperfectShotTolerance;
 
     [BoxGroup("BarSensitivity")]
-    public float BarSensitivityAndroid;
-
-    [BoxGroup("BarSensitivity")]
-    public float BarSensitivityDesktop;
-
+    public float BarSensitivity;
 }

@@ -185,13 +185,8 @@ public class InputManager : MonoBehaviour
 
     private float GetBarSensitivity()
     {
-        #if UNITY_EDITOR || UNITY_STANDALONE
-                return GameData.Instance.gameSettings.BarSensitivityDesktop;
-        #elif UNITY_ANDROID
-            return GameData.Instance.gameSettings.BarSensitivityAndroid;
-        #else
-            return 1f;
-        #endif
+        return GameData.Instance.gameSettings.BarSensitivity;
+        //return baseSensitivity * Screen.height;
     }
     
     #endregion

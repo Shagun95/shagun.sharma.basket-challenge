@@ -53,13 +53,21 @@ public class ScoreFlyerController : MonoBehaviour
     private void SetText()
     {
         int points = SessionData.Instance.scoreToAdd;
+
+        //use a more efficent way then this control
+        bool isPerfectScore = points == 3 && sessionData.currentShootType == ShootType.NET;
+        
         //check if it is a temporary bonus
         if (sessionData.currentShootType == ShootType.BACK_BOARD && sessionData.currentTemporaryBonus > 0)
             points = sessionData.currentTemporaryBonus;
 
         if (sessionData.fireModeIsActive)
             points *= 2;
-        ownText.text = $"+{points}";
+        
+        ownText.text = isPerfectScore 
+            ? $"<size=50%>PERFECT SCORE!!!</size>\n+{points}" 
+            : $"+{points}";
+        
     }
 
     private SessionData sessionData => SessionData.Instance;

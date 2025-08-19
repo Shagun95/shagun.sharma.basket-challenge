@@ -81,7 +81,6 @@ public class GameController : MonoBehaviour
     private void StartGame()
     {
         ResetGame();
-        sessionData.currentAILevel = AI_LEVEL.EASY;
         timeRemaining = gameSettings.GameTime;
         Timing.RunCoroutine(StartGameTimer());
         sessionData.gameIsOn = true;
